@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+import { useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,50 +7,126 @@ import {
   ImageBackground,
   TouchableOpacity,
   Image,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  Pressable,
 } from 'react-native';
 
+const initialFormState = {
+  login: '',
+  email: '',
+  password: '',
+};
+
 export default function App() {
+  const [formValues, setFormValues] = useState(initialFormState);
+
+  const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
+  const [test, setTest] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const onPress = () => {
+    Keyboard.dismiss();
+    setKeyboardIsOpen(false);
+    setTest(false);
+  };
+
   return (
     <>
-      <ImageBackground
-        source={require('../assets/regBG.png')}
-        style={styles.bgImg}
-      >
-        <View style={styles.container}>
-          <View style={styles.avatar}>
-            <Image />
-            <Image
-              source={require('../assets/add.png')}
-              style={styles.addAvatarBtn}
-            />
-          </View>
-          <Text style={styles.header}>Registration</Text>
-          <View style={styles.wrapper}>
-            <TextInput
-              placeholder="Login"
-              style={styles.input}
-              autoComplete="password"
-            />
-          </View>
-          <View style={styles.wrapper}>
-            <TextInput placeholder="Email" style={styles.input} />
-          </View>
-          <View style={styles.wrapper}>
-            <TextInput
-              placeholder="Password"
-              style={styles.input}
-              autoComplete="password-new"
-            />
-            <Text style={styles.showPassword}>Show</Text>
-          </View>
-          <TouchableOpacity style={styles.button} activeOpacity="0.75">
-            <Text style={{ color: '#fff', fontSize: 16 }}>Register</Text>
-          </TouchableOpacity>
-          <Text style={styles.linkToLogin}>
-            Already have an account? Log in
-          </Text>
-        </View>
-      </ImageBackground>
+      <Pressable onPress={onPress} style={{ width: '100%' }}>
+        <ImageBackground
+          source={require('../assets/regBG.png')}
+          style={styles.bgImg}
+        >
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            <View
+              style={{
+                ...styles.container,
+                marginBottom: keyboardIsOpen && !test ? -180 : 0,
+                paddingBottom: test ? 20 : 80,
+              }}
+            >
+              <View style={styles.avatar}>
+                <Image />
+                <Image
+                  source={require('../assets/add.png')}
+                  style={styles.addAvatarBtn}
+                />
+              </View>
+              <Text style={styles.header}>Registration</Text>
+              <View style={styles.wrapper}>
+                <TextInput
+                  placeholder="Login"
+                  style={styles.input}
+                  autoComplete="password"
+                  value={formValues.login}
+                  onChangeText={(newValue) =>
+                    setFormValues((prev) => ({ ...prev, login: newValue }))
+                  }
+                  onFocus={() => {
+                    setKeyboardIsOpen(true);
+                    setTest(false);
+                  }}
+                />
+              </View>
+              <View style={styles.wrapper}>
+                <TextInput
+                  placeholder="Email"
+                  style={styles.input}
+                  value={formValues.email}
+                  onChangeText={(newValue) =>
+                    setFormValues((prev) => ({ ...prev, email: newValue }))
+                  }
+                  onFocus={() => {
+                    setKeyboardIsOpen(true);
+                    setTest(false);
+                  }}
+                />
+              </View>
+              <View style={styles.wrapper}>
+                <TextInput
+                  placeholder="Password"
+                  style={styles.input}
+                  secureTextEntry={isPasswordVisible ? false : true}
+                  value={formValues.password}
+                  onChangeText={(newValue) =>
+                    setFormValues((prev) => ({ ...prev, password: newValue }))
+                  }
+                  onFocus={() => setTest(true)}
+                />
+                <TouchableOpacity
+                  style={styles.showPassword}
+                  onPress={() => setIsPasswordVisible((prev) => !prev)}
+                >
+                  <Text>{isPasswordVisible ? 'Hide' : 'Show'}</Text>
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity
+                style={styles.button}
+                activeOpacity="0.75"
+                onPress={() => {
+                  if (
+                    formValues.email !== '' &&
+                    formValues.login !== '' &&
+                    formValues.password !== ''
+                  ) {
+                    console.log(formValues);
+                    setFormValues(initialFormState);
+                  }
+                }}
+              >
+                <Text style={{ color: '#fff', fontSize: 16 }}>Register</Text>
+              </TouchableOpacity>
+              <Text style={styles.linkToLogin}>
+                Already have an account? Log in
+              </Text>
+            </View>
+          </KeyboardAvoidingView>
+        </ImageBackground>
+      </Pressable>
     </>
   );
 }
