@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,10 +11,12 @@ import {
   Platform,
   Keyboard,
   Pressable,
+  Animated,
+  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 
 const initialFormState = {
-  login: '',
   email: '',
   password: '',
 };
@@ -25,6 +27,14 @@ export default function App() {
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
   const [isLastFieldFocused, setIsLastFieldFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const [dimensions, setDimensions] = useState(Dimensions.get('window').width);
+
+  const { height, width } = useWindowDimensions();
+
+  useEffect(() => {
+    setDimensions(width);
+  }, [width]);
 
   const onBackgroundPress = () => {
     Keyboard.dismiss();
@@ -45,33 +55,13 @@ export default function App() {
             <View
               style={{
                 ...styles.container,
-                marginBottom: keyboardIsOpen && !isLastFieldFocused ? -180 : 0,
-                paddingBottom: isLastFieldFocused ? 20 : 80,
+                marginBottom: keyboardIsOpen && !isLastFieldFocused ? -240 : 0,
+                paddingBottom: isLastFieldFocused ? 20 : 145,
+                paddingHorizontal: dimensions > 600 ? 96 : 16,
               }}
             >
-              <View style={styles.avatar}>
-                <Image />
-                <Image
-                  source={require('../assets/add.png')}
-                  style={styles.addAvatarBtn}
-                />
-              </View>
-              <Text style={styles.header}>Registration</Text>
-              <View style={styles.wrapper}>
-                <TextInput
-                  placeholder="Login"
-                  style={styles.input}
-                  autoComplete="password"
-                  value={formValues.login}
-                  onChangeText={(newValue) =>
-                    setFormValues((prev) => ({ ...prev, login: newValue }))
-                  }
-                  onFocus={() => {
-                    setKeyboardIsOpen(true);
-                    setIsLastFieldFocused(false);
-                  }}
-                />
-              </View>
+              <Text style={styles.header}>Sign in</Text>
+
               <View style={styles.wrapper}>
                 <TextInput
                   placeholder="Email"
@@ -101,27 +91,25 @@ export default function App() {
                   style={styles.showPassword}
                   onPress={() => setIsPasswordVisible((prev) => !prev)}
                 >
-                  <Text>{isPasswordVisible ? 'Hide' : 'Show'}</Text>
+                  <Text style={styles.showPasswordText}>
+                    {isPasswordVisible ? 'Hide' : 'Show'}
+                  </Text>
                 </TouchableOpacity>
               </View>
               <TouchableOpacity
                 style={styles.button}
                 activeOpacity="0.75"
                 onPress={() => {
-                  if (
-                    formValues.email !== '' &&
-                    formValues.login !== '' &&
-                    formValues.password !== ''
-                  ) {
+                  if (formValues.email !== '' && formValues.password !== '') {
                     console.log(formValues);
                     setFormValues(initialFormState);
                   }
                 }}
               >
-                <Text style={{ color: '#fff', fontSize: 16 }}>Register</Text>
+                <Text style={{ color: '#fff', fontSize: 16 }}>Sign in</Text>
               </TouchableOpacity>
               <Text style={styles.linkToLogin}>
-                Already have an account? Log in
+                Do not have an account? Register
               </Text>
             </View>
           </KeyboardAvoidingView>
@@ -139,27 +127,12 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: '#fff',
-    paddingTop: 92,
+    paddingTop: 32,
     borderTopEndRadius: 25,
     borderTopStartRadius: 25,
+    paddingHorizontal: 16,
   },
-  avatar: {
-    width: 120,
-    height: 120,
-    backgroundColor: '#F6F6F6',
-    borderRadius: 16,
-    position: 'absolute',
-    top: -60,
-    left: '50%',
-    transform: [{ translateX: -60 }],
-  },
-  addAvatarBtn: {
-    position: 'absolute',
-    width: 25,
-    height: 25,
-    right: -12.5,
-    bottom: 14,
-  },
+
   header: {
     fontSize: 30,
     fontWeight: '500',
@@ -172,8 +145,6 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
 
-    marginLeft: 16,
-    marginRight: 16,
     marginBottom: 16,
     paddingHorizontal: 16,
 
@@ -192,9 +163,7 @@ const styles = StyleSheet.create({
   },
   showPasswordText: { color: '#216cc2' },
   button: {
-    // width: '100%',
     height: 50,
-    marginHorizontal: 16,
     marginTop: 25,
     paddingHorizontal: 16,
 
