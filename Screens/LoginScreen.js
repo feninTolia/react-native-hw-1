@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,12 +6,10 @@ import {
   View,
   ImageBackground,
   TouchableOpacity,
-  Image,
   KeyboardAvoidingView,
   Platform,
   Keyboard,
   Pressable,
-  Animated,
   Dimensions,
   useWindowDimensions,
 } from 'react-native';
@@ -21,7 +19,7 @@ const initialFormState = {
   password: '',
 };
 
-export default function App() {
+export default function LoginScreen({ navigation }) {
   const [formValues, setFormValues] = useState(initialFormState);
 
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
@@ -29,8 +27,7 @@ export default function App() {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const [dimensions, setDimensions] = useState(Dimensions.get('window').width);
-
-  const { height, width } = useWindowDimensions();
+  const { _, width } = useWindowDimensions();
 
   useEffect(() => {
     setDimensions(width);
@@ -42,8 +39,18 @@ export default function App() {
     setIsLastFieldFocused(false);
   };
 
+  const handleSubmit = () => {
+    if (formValues.email !== '' && formValues.password !== '') {
+      console.log(formValues);
+      setKeyboardIsOpen(false);
+      setIsLastFieldFocused(false);
+      setFormValues(initialFormState);
+      navigation.navigate('HomeScreen');
+    }
+  };
+
   return (
-    <>
+    <View style={styles.container0}>
       <Pressable onPress={onBackgroundPress} style={{ width: '100%' }}>
         <ImageBackground
           source={require('../assets/regBG.png')}
@@ -99,27 +106,35 @@ export default function App() {
               <TouchableOpacity
                 style={styles.button}
                 activeOpacity="0.75"
+                onPress={handleSubmit}
+              >
+                <Text style={styles.buttonText}>Sign in</Text>
+              </TouchableOpacity>
+              <Text
+                style={styles.linkToLogin}
                 onPress={() => {
-                  if (formValues.email !== '' && formValues.password !== '') {
-                    console.log(formValues);
-                    setFormValues(initialFormState);
-                  }
+                  setKeyboardIsOpen(false);
+                  setIsLastFieldFocused(false);
+                  navigation.navigate('RegistrationScreen');
                 }}
               >
-                <Text style={{ color: '#fff', fontSize: 16 }}>Sign in</Text>
-              </TouchableOpacity>
-              <Text style={styles.linkToLogin}>
                 Do not have an account? Register
               </Text>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
       </Pressable>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container0: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   bgImg: {
     width: '100%',
     height: '100%',
@@ -134,8 +149,10 @@ const styles = StyleSheet.create({
   },
 
   header: {
+    color: '#212121',
     fontSize: 30,
     fontWeight: '500',
+    fontFamily: 'Roboto-Medium',
     textAlign: 'center',
     marginBottom: 32,
   },
@@ -148,7 +165,8 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingHorizontal: 16,
 
-    color: '#bdbdbd',
+    fontFamily: 'Roboto-Regular',
+    color: '#212121',
     fontSize: 16,
     backgroundColor: '#f6f6f6',
 
@@ -161,7 +179,7 @@ const styles = StyleSheet.create({
     right: 32,
     top: 16,
   },
-  showPasswordText: { color: '#216cc2' },
+  showPasswordText: { color: '#216cc2', fontFamily: 'Roboto-Regular' },
   button: {
     height: 50,
     marginTop: 25,
@@ -174,6 +192,7 @@ const styles = StyleSheet.create({
 
     borderRadius: 100,
   },
+  buttonText: { color: '#fff', fontSize: 16, fontFamily: 'Roboto-Regular' },
   linkToLogin: {
     marginTop: 16,
 

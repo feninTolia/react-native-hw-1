@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -11,6 +11,8 @@ import {
   Platform,
   Keyboard,
   Pressable,
+  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 
 const initialFormState = {
@@ -19,12 +21,20 @@ const initialFormState = {
   password: '',
 };
 
-export default function App() {
+export default function RegistrationScreen({ navigation }) {
   const [formValues, setFormValues] = useState(initialFormState);
 
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
   const [isLastFieldFocused, setIsLastFieldFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const [dimensions, setDimensions] = useState(Dimensions.get('window').width);
+  const { _, width } = useWindowDimensions();
+
+  useEffect(() => {
+    console.log(width);
+    setDimensions(width);
+  }, [width]);
 
   const onBackgroundPress = () => {
     Keyboard.dismiss();
@@ -32,8 +42,22 @@ export default function App() {
     setIsLastFieldFocused(false);
   };
 
+  const handleSubmit = () => {
+    if (
+      formValues.email !== '' &&
+      formValues.login !== '' &&
+      formValues.password !== ''
+    ) {
+      console.log(formValues);
+      setKeyboardIsOpen(false);
+      setIsLastFieldFocused(false);
+      setFormValues(initialFormState);
+      navigation.navigate('HomeScreen');
+    }
+  };
+
   return (
-    <>
+    <View style={styles.container0}>
       <Pressable onPress={onBackgroundPress} style={{ width: '100%' }}>
         <ImageBackground
           source={require('../assets/regBG.png')}
@@ -47,6 +71,7 @@ export default function App() {
                 ...styles.container,
                 marginBottom: keyboardIsOpen && !isLastFieldFocused ? -180 : 0,
                 paddingBottom: isLastFieldFocused ? 20 : 80,
+                paddingHorizontal: dimensions > 600 ? 96 : 16,
               }}
             >
               <View style={styles.avatar}>
@@ -107,31 +132,35 @@ export default function App() {
               <TouchableOpacity
                 style={styles.button}
                 activeOpacity="0.75"
+                onPress={handleSubmit}
+              >
+                <Text style={styles.buttonText}>Register</Text>
+              </TouchableOpacity>
+              <Text
+                style={styles.linkToLogin}
                 onPress={() => {
-                  if (
-                    formValues.email !== '' &&
-                    formValues.login !== '' &&
-                    formValues.password !== ''
-                  ) {
-                    console.log(formValues);
-                    setFormValues(initialFormState);
-                  }
+                  setKeyboardIsOpen(false);
+                  setIsLastFieldFocused(false);
+                  navigation.navigate('LoginScreen');
                 }}
               >
-                <Text style={{ color: '#fff', fontSize: 16 }}>Register</Text>
-              </TouchableOpacity>
-              <Text style={styles.linkToLogin}>
                 Already have an account? Log in
               </Text>
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
       </Pressable>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container0: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   bgImg: {
     width: '100%',
     height: '100%',
@@ -142,6 +171,7 @@ const styles = StyleSheet.create({
     paddingTop: 92,
     borderTopEndRadius: 25,
     borderTopStartRadius: 25,
+    paddingHorizontal: 16,
   },
   avatar: {
     width: 120,
@@ -161,8 +191,10 @@ const styles = StyleSheet.create({
     bottom: 14,
   },
   header: {
+    color: '#212121',
     fontSize: 30,
     fontWeight: '500',
+    fontFamily: 'Roboto-Medium',
     textAlign: 'center',
     marginBottom: 32,
   },
@@ -172,12 +204,11 @@ const styles = StyleSheet.create({
   input: {
     height: 50,
 
-    marginLeft: 16,
-    marginRight: 16,
     marginBottom: 16,
     paddingHorizontal: 16,
 
-    color: '#bdbdbd',
+    fontFamily: 'Roboto-Regular',
+    color: '#212121',
     fontSize: 16,
     backgroundColor: '#f6f6f6',
 
@@ -190,11 +221,9 @@ const styles = StyleSheet.create({
     right: 32,
     top: 16,
   },
-  showPasswordText: { color: '#216cc2' },
+  showPasswordText: { color: '#216cc2', fontFamily: 'Roboto-Regular' },
   button: {
-    // width: '100%',
     height: 50,
-    marginHorizontal: 16,
     marginTop: 25,
     paddingHorizontal: 16,
 
@@ -205,6 +234,7 @@ const styles = StyleSheet.create({
 
     borderRadius: 100,
   },
+  buttonText: { color: '#fff', fontSize: 16, fontFamily: 'Roboto-Regular' },
   linkToLogin: {
     marginTop: 16,
 
