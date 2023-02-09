@@ -60,7 +60,7 @@ export default function App() {
             headerStyle: {
               height: 0,
             },
-            // headerTintColor: 'transparent',
+            headerLeft: () => null,
           }}
         />
       </MainStack.Navigator>

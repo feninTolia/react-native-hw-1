@@ -1,24 +1,32 @@
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import PostsScreen from './PostsScreen';
 import CommentsScreen from './CommentsScreen';
 import ProfileScreen from './ProfileScreen';
+import MyHeader from './MyHeader';
 
 const Tabs = createBottomTabNavigator();
 
-const Home = () => {
+export default function HomeScreen() {
   return (
     <Tabs.Navigator
-      screenOptions={({ route }) => ({ tabBarShowLabel: false })}
-      tabBarOptions={{
-        activeTintColor: 'tomato',
-        inactiveTintColor: 'gray',
-      }}
+      screenOptions={({ route }) => ({
+        headerLeft: false,
+        tabBarShowLabel: false,
+        headerShown: false,
+        tabBarStyle: {
+          height: 84,
+          paddingTop: 9,
+          paddingBottom: 32,
+
+          borderTopWidth: 0.5,
+        },
+      })}
     >
       <Tabs.Screen
-        name="PostsScreen"
-        component={PostsScreen}
+        name="CommentsScreen"
+        component={CommentsScreen}
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <View
@@ -45,9 +53,14 @@ const Home = () => {
       />
 
       <Tabs.Screen
-        name="CommentsScreen"
-        component={CommentsScreen}
+        name="PostsScreen"
+        component={PostsScreen}
         options={{
+          headerShown: true,
+
+          header: ({ navigation, route, options }) => {
+            return <MyHeader title={'Posts'} />;
+          },
           tabBarIcon: ({ focused, color, size }) => (
             <View
               style={{
@@ -101,7 +114,7 @@ const Home = () => {
       />
     </Tabs.Navigator>
   );
-};
+}
 
 const styles = StyleSheet.create({
   tabIconLayout: {
@@ -112,5 +125,3 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
 });
-
-export default Home;
