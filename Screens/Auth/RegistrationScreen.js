@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -6,6 +6,7 @@ import {
   View,
   ImageBackground,
   TouchableOpacity,
+  Image,
   KeyboardAvoidingView,
   Platform,
   Keyboard,
@@ -15,11 +16,12 @@ import {
 } from 'react-native';
 
 const initialFormState = {
+  login: '',
   email: '',
   password: '',
 };
 
-export default function LoginScreen({ navigation }) {
+export default function RegistrationScreen({ navigation }) {
   const [formValues, setFormValues] = useState(initialFormState);
 
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
@@ -30,6 +32,7 @@ export default function LoginScreen({ navigation }) {
   const { _, width } = useWindowDimensions();
 
   useEffect(() => {
+    console.log(width);
     setDimensions(width);
   }, [width]);
 
@@ -40,7 +43,11 @@ export default function LoginScreen({ navigation }) {
   };
 
   const handleSubmit = () => {
-    if (formValues.email !== '' && formValues.password !== '') {
+    if (
+      formValues.email !== '' &&
+      formValues.login !== '' &&
+      formValues.password !== ''
+    ) {
       console.log(formValues);
       setKeyboardIsOpen(false);
       setIsLastFieldFocused(false);
@@ -53,7 +60,7 @@ export default function LoginScreen({ navigation }) {
     <View style={styles.container0}>
       <Pressable onPress={onBackgroundPress} style={{ width: '100%' }}>
         <ImageBackground
-          source={require('../assets/regBG.png')}
+          source={require('../../assets/regBG.png')}
           style={styles.bgImg}
         >
           <KeyboardAvoidingView
@@ -62,13 +69,34 @@ export default function LoginScreen({ navigation }) {
             <View
               style={{
                 ...styles.container,
-                marginBottom: keyboardIsOpen && !isLastFieldFocused ? -240 : 0,
-                paddingBottom: isLastFieldFocused ? 20 : 145,
+                marginBottom: keyboardIsOpen && !isLastFieldFocused ? -180 : 0,
+                paddingBottom: isLastFieldFocused ? 20 : 80,
                 paddingHorizontal: dimensions > 600 ? 96 : 16,
               }}
             >
-              <Text style={styles.header}>Sign in</Text>
-
+              <View style={styles.avatar}>
+                <Image />
+                <Image
+                  source={require('../../assets/add.png')}
+                  style={styles.addAvatarBtn}
+                />
+              </View>
+              <Text style={styles.header}>Registration</Text>
+              <View style={styles.wrapper}>
+                <TextInput
+                  placeholder="Login"
+                  style={styles.input}
+                  autoComplete="password"
+                  value={formValues.login}
+                  onChangeText={(newValue) =>
+                    setFormValues((prev) => ({ ...prev, login: newValue }))
+                  }
+                  onFocus={() => {
+                    setKeyboardIsOpen(true);
+                    setIsLastFieldFocused(false);
+                  }}
+                />
+              </View>
               <View style={styles.wrapper}>
                 <TextInput
                   placeholder="Email"
@@ -98,9 +126,7 @@ export default function LoginScreen({ navigation }) {
                   style={styles.showPassword}
                   onPress={() => setIsPasswordVisible((prev) => !prev)}
                 >
-                  <Text style={styles.showPasswordText}>
-                    {isPasswordVisible ? 'Hide' : 'Show'}
-                  </Text>
+                  <Text>{isPasswordVisible ? 'Hide' : 'Show'}</Text>
                 </TouchableOpacity>
               </View>
               <TouchableOpacity
@@ -108,17 +134,17 @@ export default function LoginScreen({ navigation }) {
                 activeOpacity="0.75"
                 onPress={handleSubmit}
               >
-                <Text style={styles.buttonText}>Sign in</Text>
+                <Text style={styles.buttonText}>Register</Text>
               </TouchableOpacity>
               <Text
                 style={styles.linkToLogin}
                 onPress={() => {
                   setKeyboardIsOpen(false);
                   setIsLastFieldFocused(false);
-                  navigation.navigate('RegistrationScreen');
+                  navigation.navigate('LoginScreen');
                 }}
               >
-                Do not have an account? Register
+                Already have an account? Log in
               </Text>
             </View>
           </KeyboardAvoidingView>
@@ -142,12 +168,28 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: '#fff',
-    paddingTop: 32,
+    paddingTop: 92,
     borderTopEndRadius: 25,
     borderTopStartRadius: 25,
     paddingHorizontal: 16,
   },
-
+  avatar: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#F6F6F6',
+    borderRadius: 16,
+    position: 'absolute',
+    top: -60,
+    left: '50%',
+    transform: [{ translateX: -60 }],
+  },
+  addAvatarBtn: {
+    position: 'absolute',
+    width: 25,
+    height: 25,
+    right: -12.5,
+    bottom: 14,
+  },
   header: {
     color: '#212121',
     fontSize: 30,

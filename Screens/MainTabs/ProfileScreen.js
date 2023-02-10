@@ -1,3 +1,4 @@
+import { Link } from '@react-navigation/native';
 import React from 'react';
 import {
   StyleSheet,
@@ -20,7 +21,7 @@ export default function ProfileScreen() {
   return (
     <View style={styles.container0}>
       <ImageBackground
-        source={require('../assets/regBG.png')}
+        source={require('../../assets/regBG.png')}
         style={styles.bgImg}
       >
         <ScrollView>
@@ -32,15 +33,26 @@ export default function ProfileScreen() {
             <View style={styles.avatar}>
               <Image />
               <Image
-                source={require('../assets/add.png')}
+                source={require('../../assets/add.png')}
                 style={styles.addAvatarBtn}
               />
             </View>
+
+            <Link
+              to={{ screen: 'LoginScreen', params: { id: 'jane' } }}
+              style={styles.logOut}
+            >
+              <Image
+                source={require('../../assets/log-out.png')}
+                style={{ width: 24, height: 24 }}
+              />
+            </Link>
+
             <Text style={styles.header}>Anatolii Fenin</Text>
 
             <View style={{ marginHorizontal: 16, marginBottom: 32 }}>
               <Image
-                source={require('../assets/regBG.jpeg')}
+                source={require('../../assets/regBG.jpeg')}
                 style={{
                   borderRadius: 8,
                   height: 240,
@@ -71,14 +83,14 @@ export default function ProfileScreen() {
                     }}
                   >
                     <Image
-                      source={require('../assets/Shape.png')}
+                      source={require('../../assets/Shape.png')}
                       style={styles.postIcons}
                     />
                     <Text style={{ fontSize: 16 }}>8</Text>
                   </View>
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Image
-                      source={require('../assets/like.png')}
+                      source={require('../../assets/like.png')}
                       style={styles.postIcons}
                     />
                     <Text style={{ fontSize: 16 }}> 153</Text>
@@ -86,7 +98,7 @@ export default function ProfileScreen() {
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Image
-                    source={require('../assets/map-pin.png')}
+                    source={require('../../assets/map-pin.png')}
                     style={{ ...styles.postIcons, width: 24, height: 24 }}
                   />
                   <Text
@@ -99,7 +111,7 @@ export default function ProfileScreen() {
             </View>
             <View style={{ marginHorizontal: 16, marginBottom: 32 }}>
               <Image
-                source={require('../assets/regBG.jpeg')}
+                source={require('../../assets/regBG.jpeg')}
                 style={{
                   borderRadius: 8,
                   height: 240,
@@ -130,14 +142,14 @@ export default function ProfileScreen() {
                     }}
                   >
                     <Image
-                      source={require('../assets/Shape.png')}
+                      source={require('../../assets/Shape.png')}
                       style={styles.postIcons}
                     />
                     <Text style={{ fontSize: 16 }}>8</Text>
                   </View>
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Image
-                      source={require('../assets/like.png')}
+                      source={require('../../assets/like.png')}
                       style={styles.postIcons}
                     />
                     <Text style={{ fontSize: 16 }}> 153</Text>
@@ -145,7 +157,7 @@ export default function ProfileScreen() {
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Image
-                    source={require('../assets/map-pin.png')}
+                    source={require('../../assets/map-pin.png')}
                     style={{ ...styles.postIcons, width: 24, height: 24 }}
                   />
                   <Text
@@ -158,7 +170,7 @@ export default function ProfileScreen() {
             </View>
             <View style={{ marginHorizontal: 16, marginBottom: 32 }}>
               <Image
-                source={require('../assets/regBG.jpeg')}
+                source={require('../../assets/regBG.jpeg')}
                 style={{
                   borderRadius: 8,
                   height: 240,
@@ -189,14 +201,14 @@ export default function ProfileScreen() {
                     }}
                   >
                     <Image
-                      source={require('../assets/Shape.png')}
+                      source={require('../../assets/Shape.png')}
                       style={styles.postIcons}
                     />
                     <Text style={{ fontSize: 16 }}>8</Text>
                   </View>
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Image
-                      source={require('../assets/like.png')}
+                      source={require('../../assets/like.png')}
                       style={styles.postIcons}
                     />
                     <Text style={{ fontSize: 16 }}> 153</Text>
@@ -204,7 +216,7 @@ export default function ProfileScreen() {
                 </View>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Image
-                    source={require('../assets/map-pin.png')}
+                    source={require('../../assets/map-pin.png')}
                     style={{ ...styles.postIcons, width: 24, height: 24 }}
                   />
                   <Text
@@ -257,6 +269,11 @@ const styles = StyleSheet.create({
     height: 25,
     right: -12.5,
     bottom: 14,
+  },
+  logOut: {
+    position: 'absolute',
+    right: 16,
+    top: 22,
   },
   header: {
     color: '#212121',

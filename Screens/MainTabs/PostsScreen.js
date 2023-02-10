@@ -13,7 +13,7 @@ export default function HomeScreen() {
         }}
       >
         <Image
-          source={require('../assets/regBG.jpeg')}
+          source={require('../../assets/regBG.jpeg')}
           style={{ width: 60, height: 60, borderRadius: 16 }}
         />
         <View style={{ justifyContent: 'center', marginLeft: 8 }}>
@@ -28,7 +28,7 @@ export default function HomeScreen() {
       <ScrollView>
         <View style={{ marginHorizontal: 16, marginBottom: 32 }}>
           <Image
-            source={require('../assets/regBG.jpeg')}
+            source={require('../../assets/regBG.jpeg')}
             style={{
               borderRadius: 8,
               height: 240,
@@ -59,14 +59,14 @@ export default function HomeScreen() {
                 }}
               >
                 <Image
-                  source={require('../assets/Shape.png')}
+                  source={require('../../assets/Shape.png')}
                   style={styles.postIcons}
                 />
                 <Text style={{ fontSize: 16 }}>8</Text>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Image
-                  source={require('../assets/like.png')}
+                  source={require('../../assets/like.png')}
                   style={styles.postIcons}
                 />
                 <Text style={{ fontSize: 16 }}> 153</Text>
@@ -74,7 +74,7 @@ export default function HomeScreen() {
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
-                source={require('../assets/map-pin.png')}
+                source={require('../../assets/map-pin.png')}
                 style={{ ...styles.postIcons, width: 24, height: 24 }}
               />
               <Text style={{ fontSize: 16, textDecorationLine: 'underline' }}>
@@ -85,7 +85,7 @@ export default function HomeScreen() {
         </View>
         <View style={{ marginHorizontal: 16, marginBottom: 32 }}>
           <Image
-            source={require('../assets/regBG.jpeg')}
+            source={require('../../assets/regBG.jpeg')}
             style={{
               borderRadius: 8,
               height: 240,
@@ -116,14 +116,14 @@ export default function HomeScreen() {
                 }}
               >
                 <Image
-                  source={require('../assets/Shape.png')}
+                  source={require('../../assets/Shape.png')}
                   style={styles.postIcons}
                 />
                 <Text style={{ fontSize: 16 }}>8</Text>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Image
-                  source={require('../assets/like.png')}
+                  source={require('../../assets/like.png')}
                   style={styles.postIcons}
                 />
                 <Text style={{ fontSize: 16 }}> 153</Text>
@@ -131,7 +131,7 @@ export default function HomeScreen() {
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
-                source={require('../assets/map-pin.png')}
+                source={require('../../assets/map-pin.png')}
                 style={{ ...styles.postIcons, width: 24, height: 24 }}
               />
               <Text style={{ fontSize: 16, textDecorationLine: 'underline' }}>
@@ -142,7 +142,7 @@ export default function HomeScreen() {
         </View>
         <View style={{ marginHorizontal: 16, marginBottom: 32 }}>
           <Image
-            source={require('../assets/regBG.jpeg')}
+            source={require('../../assets/regBG.jpeg')}
             style={{
               borderRadius: 8,
               height: 240,
@@ -173,14 +173,14 @@ export default function HomeScreen() {
                 }}
               >
                 <Image
-                  source={require('../assets/Shape.png')}
+                  source={require('../../assets/Shape.png')}
                   style={styles.postIcons}
                 />
                 <Text style={{ fontSize: 16 }}>8</Text>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Image
-                  source={require('../assets/like.png')}
+                  source={require('../../assets/like.png')}
                   style={styles.postIcons}
                 />
                 <Text style={{ fontSize: 16 }}> 153</Text>
@@ -188,7 +188,7 @@ export default function HomeScreen() {
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Image
-                source={require('../assets/map-pin.png')}
+                source={require('../../assets/map-pin.png')}
                 style={{ ...styles.postIcons, width: 24, height: 24 }}
               />
               <Text style={{ fontSize: 16, textDecorationLine: 'underline' }}>

@@ -2,19 +2,21 @@ import React from 'react';
 import { Link } from '@react-navigation/native';
 import { StyleSheet, View, Text, Image } from 'react-native';
 
-export default function MyHeader({ title, navigation }) {
+export default function MyHeader({ title, navigation, logout }) {
   return (
     <View style={styles?.container}>
       <Text style={styles.text}> {title}</Text>
-      <Link
-        to={{ screen: 'LoginScreen', params: { id: 'jane' } }}
-        style={styles.logOut}
-      >
-        <Image
-          source={require('../assets/log-out.png')}
-          style={{ width: 24, height: 24 }}
-        />
-      </Link>
+      {logout && (
+        <Link
+          to={{ screen: 'LoginScreen', params: { id: 'jane' } }}
+          style={styles.logOut}
+        >
+          <Image
+            source={require('../assets/log-out.png')}
+            style={{ width: 24, height: 24 }}
+          />
+        </Link>
+      )}
     </View>
   );
 }
