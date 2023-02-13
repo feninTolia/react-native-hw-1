@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Image,
   Keyboard,
@@ -16,11 +16,8 @@ const initialFormState = {
 
 export default function CommentsScreen({ navigation }) {
   const [formValues, setFormValues] = useState(initialFormState);
-
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  console.log(navigation);
   const onBackgroundPress = () => {
     Keyboard.dismiss();
     setKeyboardIsOpen(false);
