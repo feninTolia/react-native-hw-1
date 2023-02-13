@@ -1,232 +1,43 @@
-import { Link } from '@react-navigation/native';
 import React from 'react';
 import {
   StyleSheet,
   Text,
-  TextInput,
   View,
   ImageBackground,
-  TouchableOpacity,
   Image,
-  KeyboardAvoidingView,
-  Platform,
-  Keyboard,
-  Pressable,
-  Dimensions,
-  useWindowDimensions,
   ScrollView,
+  Pressable,
 } from 'react-native';
+import Post from '../Components/Post';
 
 export default function ProfileScreen() {
   return (
-    <View style={styles.container0}>
+    <View style={s.container}>
       <ImageBackground
         source={require('../../assets/regBG.png')}
-        style={styles.bgImg}
+        style={s.bgImg}
       >
         <ScrollView>
-          <View
-            style={{
-              ...styles.container,
-            }}
-          >
-            <View style={styles.avatar}>
+          <View style={s.wrapper}>
+            <View style={s.avatar}>
               <Image />
               <Image
                 source={require('../../assets/add.png')}
-                style={styles.addAvatarBtn}
+                style={s.addAvatarBtn}
               />
             </View>
 
-            <Link
-              to={{ screen: 'LoginScreen', params: { id: 'jane' } }}
-              style={styles.logOut}
-            >
+            <Pressable style={s.logOut} onPress>
               <Image
                 source={require('../../assets/log-out.png')}
-                style={{ width: 24, height: 24 }}
+                style={s.logOutIcon}
               />
-            </Link>
+            </Pressable>
+            <Text style={s.header}>Anatolii Fenin</Text>
 
-            <Text style={styles.header}>Anatolii Fenin</Text>
-
-            <View style={{ marginHorizontal: 16, marginBottom: 32 }}>
-              <Image
-                source={require('../../assets/regBG.jpeg')}
-                style={{
-                  borderRadius: 8,
-                  height: 240,
-                  width: 'auto',
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: 'Roboto-Medium',
-                  paddingVertical: 8,
-                }}
-              >
-                Forest
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <View style={{ flexDirection: 'row' }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginRight: 27,
-                    }}
-                  >
-                    <Image
-                      source={require('../../assets/Shape.png')}
-                      style={styles.postIcons}
-                    />
-                    <Text style={{ fontSize: 16 }}>8</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Image
-                      source={require('../../assets/like.png')}
-                      style={styles.postIcons}
-                    />
-                    <Text style={{ fontSize: 16 }}> 153</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Image
-                    source={require('../../assets/map-pin.png')}
-                    style={{ ...styles.postIcons, width: 24, height: 24 }}
-                  />
-                  <Text
-                    style={{ fontSize: 16, textDecorationLine: 'underline' }}
-                  >
-                    Ukraine
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <View style={{ marginHorizontal: 16, marginBottom: 32 }}>
-              <Image
-                source={require('../../assets/regBG.jpeg')}
-                style={{
-                  borderRadius: 8,
-                  height: 240,
-                  width: 'auto',
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: 'Roboto-Medium',
-                  paddingVertical: 8,
-                }}
-              >
-                Forest
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <View style={{ flexDirection: 'row' }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginRight: 27,
-                    }}
-                  >
-                    <Image
-                      source={require('../../assets/Shape.png')}
-                      style={styles.postIcons}
-                    />
-                    <Text style={{ fontSize: 16 }}>8</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Image
-                      source={require('../../assets/like.png')}
-                      style={styles.postIcons}
-                    />
-                    <Text style={{ fontSize: 16 }}> 153</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Image
-                    source={require('../../assets/map-pin.png')}
-                    style={{ ...styles.postIcons, width: 24, height: 24 }}
-                  />
-                  <Text
-                    style={{ fontSize: 16, textDecorationLine: 'underline' }}
-                  >
-                    Ukraine
-                  </Text>
-                </View>
-              </View>
-            </View>
-            <View style={{ marginHorizontal: 16, marginBottom: 32 }}>
-              <Image
-                source={require('../../assets/regBG.jpeg')}
-                style={{
-                  borderRadius: 8,
-                  height: 240,
-                  width: 'auto',
-                }}
-              />
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: 'Roboto-Medium',
-                  paddingVertical: 8,
-                }}
-              >
-                Forest
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <View style={{ flexDirection: 'row' }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginRight: 27,
-                    }}
-                  >
-                    <Image
-                      source={require('../../assets/Shape.png')}
-                      style={styles.postIcons}
-                    />
-                    <Text style={{ fontSize: 16 }}>8</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Image
-                      source={require('../../assets/like.png')}
-                      style={styles.postIcons}
-                    />
-                    <Text style={{ fontSize: 16 }}> 153</Text>
-                  </View>
-                </View>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Image
-                    source={require('../../assets/map-pin.png')}
-                    style={{ ...styles.postIcons, width: 24, height: 24 }}
-                  />
-                  <Text
-                    style={{ fontSize: 16, textDecorationLine: 'underline' }}
-                  >
-                    Ukraine
-                  </Text>
-                </View>
-              </View>
-            </View>
+            <Post />
+            <Post />
+            <Post />
           </View>
         </ScrollView>
       </ImageBackground>
@@ -234,8 +45,8 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container0: {
+const s = StyleSheet.create({
+  container: {
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
@@ -246,7 +57,7 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'flex-end',
   },
-  container: {
+  wrapper: {
     marginTop: 200,
     backgroundColor: '#fff',
     paddingTop: 92,
@@ -275,6 +86,7 @@ const styles = StyleSheet.create({
     right: 16,
     top: 22,
   },
+  logOutIcon: { width: 24, height: 24 },
   header: {
     color: '#212121',
     fontSize: 30,

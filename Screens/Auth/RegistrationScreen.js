@@ -32,7 +32,6 @@ export default function RegistrationScreen({ navigation }) {
   const { _, width } = useWindowDimensions();
 
   useEffect(() => {
-    console.log(width);
     setDimensions(width);
   }, [width]);
 

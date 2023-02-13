@@ -4,7 +4,7 @@ import { Camera, CameraType } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import Button from '../Components/Button';
 
-export default function CameraTest() {
+export default function CameraInterface({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -23,7 +23,7 @@ export default function CameraTest() {
     if (cameraRef) {
       try {
         const data = await cameraRef.current.takePictureAsync();
-        console.log(data);
+
         setImage(data.uri);
       } catch (error) {
         console.warn(error);
@@ -35,8 +35,8 @@ export default function CameraTest() {
     if (image) {
       try {
         await MediaLibrary.createAssetAsync(image);
-        alert('Picture saved!');
         setImage(null);
+        navigation.navigate('CreatePost', { image });
       } catch (error) {
         console.warn(error);
       }
@@ -57,16 +57,7 @@ export default function CameraTest() {
     <View style={s.container}>
       {!image ? (
         <Camera style={s.camera} type={type} flashMode={flash} ref={cameraRef}>
-          <View
-            style={{
-              position: 'absolute',
-              top: 32,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              width: '100%',
-              paddingHorizontal: 32,
-            }}
-          >
+          <View style={s.flashReverseBtnsWrapper}>
             <Button
               title={'🔄'}
               onPress={() => {
@@ -93,13 +84,7 @@ export default function CameraTest() {
 
       <View>
         {image ? (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-evenly',
-              gap: 30,
-            }}
-          >
+          <View style={s.saveRetakeBtnsWrapper}>
             <Button
               title={'Re-take'}
               onPress={() => {
@@ -119,7 +104,19 @@ export default function CameraTest() {
 const s = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 128,
   },
-  camera: { flex: 1 },
+  camera: { height: 240 },
+  flashReverseBtnsWrapper: {
+    marginTop: 64,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 16,
+  },
   takenPhoto: { flex: 1 },
+  saveRetakeBtnsWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    gap: 30,
+  },
 });

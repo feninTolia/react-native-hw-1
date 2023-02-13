@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Image,
   Keyboard,
@@ -8,15 +8,40 @@ import {
   View,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
+import * as Location from 'expo-location';
 
 const initialFormState = {
   title: '',
   location: '',
+  date: null,
 };
 
-export default function CommentsScreen({ navigation, test }) {
+export default function CommentsScreen({ navigation, route }) {
   const [formValues, setFormValues] = useState(initialFormState);
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
+  const [cameraImage, setCameraImage] = useState(null);
+  const [location, setLocation] = useState(null);
+  const [hasLocationPermission, setHasLocationPermission] = useState(null);
+
+  useEffect(() => {
+    if (route.params?.image) {
+      setCameraImage(route.params?.image);
+      setFormValues((prev) => ({ ...prev, date: new Date().toISOString() }));
+    }
+    return () => {
+      console.log('un-mount');
+    };
+  }, [route]);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      setHasLocationPermission(status === 'granted');
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
+  }, []);
 
   const onBackgroundPress = () => {
     Keyboard.dismiss();
@@ -25,63 +50,53 @@ export default function CommentsScreen({ navigation, test }) {
 
   const handleSubmit = () => {
     if (formValues.location && formValues.title) {
-      setKeyboardIsOpen(false);
+      navigation.navigate('DefaultPostsScreen', {
+        cameraImage,
+        formValues,
+        location,
+      });
       setFormValues(initialFormState);
-      navigation.navigate('PostsScreen');
+      setKeyboardIsOpen(false);
     }
   };
-
-  console.log(test);
 
   return (
     <View
       style={{
-        ...styles.container,
+        ...s.container,
         marginTop: keyboardIsOpen ? -150 : 0,
       }}
     >
-      <Pressable onPress={onBackgroundPress} style={{ width: '100%' }}>
+      <Pressable onPress={onBackgroundPress} style={s.tapToCloseKeyboardZone}>
         <Pressable
           onPress={() => {
-            navigation.navigate('CameraTest');
+            navigation.navigate('CameraInterface');
           }}
         >
-          <View
-            style={{
-              width: '100%',
-              height: 240,
-              backgroundColor: '#F6F6F6',
-              borderRadius: 8,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <View
-              style={{
-                width: 60,
-                height: 60,
-                backgroundColor: '#fff',
-                borderRadius: 50,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
+          <View style={s.postImagePreviewWrapper}>
+            <Image source={{ uri: cameraImage }} style={s.postImagePreview} />
+            <View>
+              <View
+                style={{
+                  ...s.cameraIconBG,
+                  opacity: cameraImage ? 0.3 : 1,
+                }}
+              />
               <Image
-                source={require('../../assets/camera-black.png')}
-                style={{ width: 24, height: 24 }}
+                source={
+                  cameraImage
+                    ? require('../../assets/camera-white.png')
+                    : require('../../assets/camera-black.png')
+                }
+                style={s.cameraIcon}
               />
             </View>
           </View>
         </Pressable>
         <Text
-          style={{
-            marginTop: 8,
-            marginBottom: 32,
-            color: '#BDBDBD',
-            fontSize: 16,
-          }}
+          style={s.downloadPhotoBtnText}
           onPress={() => {
-            navigation.navigate('CameraTest');
+            navigation.navigate('CameraInterface');
           }}
         >
           Download photo
@@ -89,16 +104,19 @@ export default function CommentsScreen({ navigation, test }) {
         <View>
           <TextInput
             placeholder="Title..."
-            style={{ ...styles.input }}
+            style={s.input}
             value={formValues.title}
             onChangeText={(newValue) =>
-              setFormValues((prev) => ({ ...prev, title: newValue }))
+              setFormValues((prev) => ({
+                ...prev,
+                title: newValue,
+              }))
             }
             onFocus={() => setKeyboardIsOpen(true)}
           ></TextInput>
           <TextInput
             placeholder="Location..."
-            style={styles.input}
+            style={s.input}
             value={formValues.location}
             onChangeText={(newValue) =>
               setFormValues((prev) => ({ ...prev, location: newValue }))
@@ -108,7 +126,7 @@ export default function CommentsScreen({ navigation, test }) {
         </View>
         <Pressable
           style={({ pressed }) => [
-            styles.submitButton,
+            s.submitButton,
             {
               backgroundColor:
                 pressed && formValues.location && formValues.title
@@ -118,14 +136,20 @@ export default function CommentsScreen({ navigation, test }) {
           ]}
           onPress={handleSubmit}
         >
-          <Text style={styles.submitButtonText}>Publish</Text>
+          <Text style={s.submitButtonText}>Publish</Text>
+        </Pressable>
+        <Pressable style={s.trashButton}>
+          <Image
+            source={require('../../assets/trash-2.png')}
+            style={s.trashButtonIcon}
+          />
         </Pressable>
       </Pressable>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -133,7 +157,44 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
     paddingHorizontal: 16,
   },
-  text: { fontSize: 32, fontFamily: 'Roboto-Medium' },
+  tapToCloseKeyboardZone: { width: '100%', flex: 1 },
+  postImagePreviewWrapper: {
+    width: '100%',
+    height: 240,
+    backgroundColor: '#F6F6F6',
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  postImagePreview: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    borderRadius: 8,
+  },
+  cameraIconBG: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#fff',
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cameraIcon: {
+    width: 24,
+    height: 24,
+    opacity: 1,
+    position: 'absolute',
+    top: 18,
+    left: 18,
+  },
+  downloadPhotoBtnText: {
+    marginTop: 8,
+    marginBottom: 32,
+    color: '#BDBDBD',
+    fontSize: 16,
+  },
+  // text: { fontSize: 32, fontFamily: 'Roboto-Medium' },
   input: {
     borderBottomWidth: 1,
     borderBottomColor: '#E8E8E8',
@@ -157,4 +218,20 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontFamily: 'Roboto-Regular',
   },
+  trashButton: {
+    position: 'absolute',
+    bottom: 16,
+    right: '50%',
+    transform: [{ translateX: 35 }],
+
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    width: 70,
+    height: 40,
+
+    backgroundColor: '#F6F6F6',
+    borderRadius: 20,
+  },
+  trashButtonIcon: { width: 24, height: 24 },
 });

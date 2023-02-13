@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { StyleSheet } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -13,13 +13,16 @@ import ProfileScreen from './Screens/MainTabs/ProfileScreen';
 
 import MyHeader from './Screens/MyHeader';
 import TabBarIcon from './Screens/TabBarIcon';
-import CameraTest from './Screens/MainTabs/CameraTest';
+
+import CameraInterface from './Screens/MainTabs/CameraInterface';
 
 const AuthStack = createStackNavigator();
 const CreatePostStack = createStackNavigator();
 const MainTabs = createBottomTabNavigator();
 
 export default function useRoute(isAuth) {
+  const [cameraOpen, setCameraOpen] = useState(null);
+
   if (!isAuth) {
     return (
       <AuthStack.Navigator initialRouteName="LoginScreen">
@@ -48,7 +51,10 @@ export default function useRoute(isAuth) {
         headerLeft: false,
         tabBarShowLabel: false,
         headerShown: false,
-        tabBarStyle: styles.tabBarStyle,
+        tabBarStyle: {
+          ...styles.tabBarStyle,
+          display: cameraOpen ? 'none' : 'auto',
+        },
       })}
     >
       <MainTabs.Screen
@@ -74,6 +80,7 @@ export default function useRoute(isAuth) {
       <MainTabs.Screen
         name="CreatePostScreen"
         options={{
+          unmountOnBlur: true,
           headerLeft: true,
           tabBarStyle: { display: false ? 'none' : 'auto' },
           tabBarIcon: ({ focused, color, size }) => (
@@ -99,8 +106,8 @@ export default function useRoute(isAuth) {
               }}
             />
             <CreatePostStack.Screen
-              name="CameraTest"
-              component={CameraTest}
+              name="CameraInterface"
+              component={CameraInterface}
               options={{ headerShown: false }}
             />
           </CreatePostStack.Navigator>
