@@ -14,7 +14,7 @@ const initialFormState = {
   location: '',
 };
 
-export default function CommentsScreen({ navigation }) {
+export default function CommentsScreen({ navigation, test }) {
   const [formValues, setFormValues] = useState(initialFormState);
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
 
@@ -31,6 +31,8 @@ export default function CommentsScreen({ navigation }) {
     }
   };
 
+  console.log(test);
+
   return (
     <View
       style={{
@@ -39,38 +41,47 @@ export default function CommentsScreen({ navigation }) {
       }}
     >
       <Pressable onPress={onBackgroundPress} style={{ width: '100%' }}>
-        <View
-          style={{
-            width: '100%',
-            height: 240,
-            backgroundColor: '#F6F6F6',
-            borderRadius: 8,
-            alignItems: 'center',
-            justifyContent: 'center',
+        <Pressable
+          onPress={() => {
+            navigation.navigate('CameraTest');
           }}
         >
           <View
             style={{
-              width: 60,
-              height: 60,
-              backgroundColor: '#fff',
-              borderRadius: 50,
+              width: '100%',
+              height: 240,
+              backgroundColor: '#F6F6F6',
+              borderRadius: 8,
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <Image
-              source={require('../../assets/camera-black.png')}
-              style={{ width: 24, height: 24 }}
-            />
+            <View
+              style={{
+                width: 60,
+                height: 60,
+                backgroundColor: '#fff',
+                borderRadius: 50,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Image
+                source={require('../../assets/camera-black.png')}
+                style={{ width: 24, height: 24 }}
+              />
+            </View>
           </View>
-        </View>
+        </Pressable>
         <Text
           style={{
             marginTop: 8,
             marginBottom: 32,
             color: '#BDBDBD',
             fontSize: 16,
+          }}
+          onPress={() => {
+            navigation.navigate('CameraTest');
           }}
         >
           Download photo

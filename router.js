@@ -13,8 +13,10 @@ import ProfileScreen from './Screens/MainTabs/ProfileScreen';
 
 import MyHeader from './Screens/MyHeader';
 import TabBarIcon from './Screens/TabBarIcon';
+import CameraTest from './Screens/MainTabs/CameraTest';
 
 const AuthStack = createStackNavigator();
+const CreatePostStack = createStackNavigator();
 const MainTabs = createBottomTabNavigator();
 
 export default function useRoute(isAuth) {
@@ -71,14 +73,9 @@ export default function useRoute(isAuth) {
 
       <MainTabs.Screen
         name="CreatePostScreen"
-        component={CreatePostScreen}
         options={{
-          headerShown: true,
-          header: ({ navigation, route, options }) => {
-            // console.log(navigation);
-            return <MyHeader title={'Create post'} />;
-          },
           headerLeft: true,
+          tabBarStyle: { display: false ? 'none' : 'auto' },
           tabBarIcon: ({ focused, color, size }) => (
             <TabBarIcon
               focused={focused}
@@ -88,7 +85,27 @@ export default function useRoute(isAuth) {
             />
           ),
         }}
-      />
+      >
+        {() => (
+          <CreatePostStack.Navigator>
+            <CreatePostStack.Screen
+              name="CreatePost"
+              component={CreatePostScreen}
+              options={{
+                headerShown: true,
+                header: ({ navigation, route, options }) => {
+                  return <MyHeader title={'Create post'} />;
+                },
+              }}
+            />
+            <CreatePostStack.Screen
+              name="CameraTest"
+              component={CameraTest}
+              options={{ headerShown: false }}
+            />
+          </CreatePostStack.Navigator>
+        )}
+      </MainTabs.Screen>
 
       <MainTabs.Screen
         name="ProfileScreen"
