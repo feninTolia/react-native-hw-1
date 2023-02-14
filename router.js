@@ -11,7 +11,6 @@ import PostsScreen from './Screens/MainTabs/PostsScreen';
 import CreatePostScreen from './Screens/MainTabs/CreatePostScreen';
 import ProfileScreen from './Screens/MainTabs/ProfileScreen';
 
-import MyHeader from './Screens/Components/MyHeader';
 import TabBarIcon from './Screens/TabBarIcon';
 
 const AuthStack = createStackNavigator();
@@ -50,7 +49,7 @@ export default function useRoute(isAuth) {
         headerShown: false,
         tabBarStyle: {
           ...styles.tabBarStyle,
-          display: cameraOpen ? 'none' : 'auto',
+          // display: cameraOpen ? 'none' : 'auto',
         },
       })}
     >
@@ -76,11 +75,11 @@ export default function useRoute(isAuth) {
         options={{
           // headerShown: false,
           unmountOnBlur: true,
-          tabBarStyle: { display: false ? 'none' : 'auto' },
+          // tabBarStyle: { {...styles.tabBarStyle, display: false ? 'none' : 'auto' }},
           tabBarIcon: ({ focused, color, size }) => (
             <TabBarIcon
               focused={focused}
-              size={size}
+              size={16}
               focusedIcon={require('./assets/tab-icons/union-light.png')}
               unFocusedIcon={require('./assets/tab-icons/union.png')}
             />

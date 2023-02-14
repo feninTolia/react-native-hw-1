@@ -11,7 +11,7 @@ export default function TabBarIcon({
     <View
       style={{
         ...styles.tabIconLayout,
-        backgroundColor: focused ? 'tomato' : 'transparent',
+        backgroundColor: focused ? '#FF6C00' : 'transparent',
       }}
     >
       <Image
