@@ -13,14 +13,21 @@ export default function Post({
       <Image source={{ uri: imageUri }} style={s.mainImage} />
       <Text style={s.title}>{title}</Text>
       <View style={s.iconsWrapper}>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
           <View style={s.commentsWrapper}>
-            <Image
-              source={require('../../assets/Shape.png')}
-              style={s.postIcons}
-            />
+            <Link
+              to={{ screen: 'CommentsScreen', params: { imageUri } }}
+              style={{ width: 18, marginRight: 8 }}
+            >
+              <Image
+                source={require('../../assets/Shape.png')}
+                style={s.postIcons}
+              />
+            </Link>
+
             <Text style={s.iconsText}>8</Text>
           </View>
+
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Image
               source={require('../../assets/like.png')}
@@ -47,11 +54,12 @@ export default function Post({
 
 const s = StyleSheet.create({
   container: { marginHorizontal: 16, marginBottom: 32 },
-  postIcons: { width: 18, height: 18, marginRight: 8 },
+  postIcons: { width: 20, height: 19, marginRight: 8 },
   mainImage: {
     borderRadius: 8,
     height: 240,
     width: 'auto',
+    backgroundColor: 'green',
   },
   title: {
     fontSize: 16,

@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, FlatList } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  FlatList,
+  Pressable,
+} from 'react-native';
+
 import Post from '../../Components/Post';
 
-export default function DefaultPostsScreen({ route }) {
+export default function DefaultPostsScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -13,7 +21,12 @@ export default function DefaultPostsScreen({ route }) {
 
   return (
     <View style={s.container}>
-      <View style={s.creditsWrapper}>
+      <Pressable
+        style={s.creditsWrapper}
+        onPress={() => {
+          navigation.navigate('ProfileScreen');
+        }}
+      >
         <Image
           source={require('../../../assets/regBG.jpeg')}
           style={s.avatar}
@@ -22,7 +35,7 @@ export default function DefaultPostsScreen({ route }) {
           <Text style={s.name}>Anatolii Fenin</Text>
           <Text style={s.email}>example@mail.com</Text>
         </View>
-      </View>
+      </Pressable>
 
       <FlatList
         data={posts.sort(

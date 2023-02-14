@@ -4,11 +4,15 @@ import { StyleSheet, Text, View } from 'react-native';
 
 export default function MapViewScreen({ route }) {
   if (route.params.mapNavigate === null) {
-    return <Text>Location has not detected</Text>;
+    alert('Your location was not detected.');
+    return (
+      <View style={styles.container}>
+        <MapView style={styles.map} />
+      </View>
+    );
   }
 
   const { latitude, longitude } = route.params.mapNavigate?.coords;
-  console.log(route.params.mapNavigate);
 
   return (
     <View style={styles.container}>

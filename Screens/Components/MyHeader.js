@@ -1,21 +1,38 @@
 import React from 'react';
 import { Link } from '@react-navigation/native';
-import { StyleSheet, View, Text, Image } from 'react-native';
+import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
 
-export default function MyHeader({ title, navigation, logout }) {
+export default function MyHeader({ title, goBack, logout }) {
   return (
     <View style={styles?.container}>
-      <Text style={styles.text}> {title}</Text>
-      {logout && (
-        <Link
-          to={{ screen: 'LoginScreen', params: { id: 'jane' } }}
-          style={styles.logOut}
+      {goBack && (
+        <Pressable
+          style={{ position: 'absolute', left: 16, top: 54 }}
+          onPress={() => {
+            goBack();
+          }}
         >
           <Image
-            source={require('../assets/log-out.png')}
+            source={require('../../assets/arrow-left.png')}
             style={{ width: 24, height: 24 }}
           />
-        </Link>
+        </Pressable>
+      )}
+
+      <Text style={styles.text}> {title}</Text>
+      {logout && (
+        <Pressable
+          // to={{ screen: 'LoginScreen', params: { id: 'jane' } }}
+          style={styles.logOut}
+          onPress={() => {
+            console.log('logout via redux');
+          }}
+        >
+          <Image
+            source={require('../../assets/log-out.png')}
+            style={{ width: 24, height: 24 }}
+          />
+        </Pressable>
       )}
     </View>
   );
@@ -24,7 +41,6 @@ export default function MyHeader({ title, navigation, logout }) {
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    // height: 88,
     paddingTop: 55,
     paddingBottom: 11,
     alignItems: 'center',

@@ -45,7 +45,6 @@ export default function LoginScreen({ navigation }) {
       setKeyboardIsOpen(false);
       setIsLastFieldFocused(false);
       setFormValues(initialFormState);
-      // navigation.navigate('HomeScreen');
     }
   };
 

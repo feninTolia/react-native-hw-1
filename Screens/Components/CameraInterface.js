@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View, Pressable } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
-import Button from '../Components/Button';
+import Button from './Button';
 
 export default function CameraInterface({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -36,7 +36,7 @@ export default function CameraInterface({ navigation }) {
       try {
         await MediaLibrary.createAssetAsync(image);
         setImage(null);
-        navigation.navigate('CreatePost', { image });
+        navigation.navigate('DefaultCreatePostScreen', { image });
       } catch (error) {
         console.warn(error);
       }
@@ -45,7 +45,7 @@ export default function CameraInterface({ navigation }) {
 
   if (hasCameraPermission === false) {
     return (
-      <View>
+      <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Text>
           Camera permissinos has not granted. Please change that on settings
         </Text>
@@ -58,16 +58,21 @@ export default function CameraInterface({ navigation }) {
       {!image ? (
         <Camera style={s.camera} type={type} flashMode={flash} ref={cameraRef}>
           <View style={s.flashReverseBtnsWrapper}>
-            <Button
-              title={'🔄'}
+            <Pressable
+              style={s.button}
               onPress={() => {
                 setType(
                   type === CameraType.back ? CameraType.front : CameraType.back
                 );
               }}
-            />
-            <Button
-              title={'⚡'}
+            >
+              <Text style={s.text}>🔄</Text>
+            </Pressable>
+            <Pressable
+              style={{
+                ...s.button,
+                backgroundColor: flash ? 'red' : 'lightblue',
+              }}
               onPress={() => {
                 setFlash(
                   flash === Camera.Constants.FlashMode.off
@@ -75,26 +80,40 @@ export default function CameraInterface({ navigation }) {
                     : Camera.Constants.FlashMode.off
                 );
               }}
-            />
+            >
+              <Text style={s.text}>⚡</Text>
+            </Pressable>
           </View>
+          <View style={s.shootingArea}></View>
         </Camera>
       ) : (
-        <Image source={{ uri: image }} style={s.takenPhoto} />
+        <View style={s.takenPhotoWrapper}>
+          <Image source={{ uri: image }} style={s.takenPhoto} />
+        </View>
       )}
 
       <View>
         {image ? (
           <View style={s.saveRetakeBtnsWrapper}>
-            <Button
-              title={'Re-take'}
+            <Pressable
               onPress={() => {
                 setImage(null);
               }}
-            />
-            <Button title={'Save'} onPress={saveImage} />
+              style={s.button}
+            >
+              <Text style={s.text}>Retake</Text>
+            </Pressable>
+            <Pressable onPress={saveImage} style={s.button}>
+              <Text style={s.text}>Save</Text>
+            </Pressable>
           </View>
         ) : (
-          <Button title="TakePhoto" onPress={takePicture} />
+          <Pressable
+            onPress={takePicture}
+            style={{ ...s.button, borderRadius: 0, paddingVertical: 32 }}
+          >
+            <Text style={s.text}>Take photo</Text>
+          </Pressable>
         )}
       </View>
     </View>
@@ -104,19 +123,44 @@ export default function CameraInterface({ navigation }) {
 const s = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 128,
   },
-  camera: { height: 240 },
+  camera: { flex: 1 },
+  shootingArea: {
+    position: 'absolute',
+    top: '50%',
+    transform: [{ translateY: -120 }],
+
+    width: '100%',
+    height: 240,
+    borderWidth: 5,
+
+    borderStyle: 'dashed',
+    borderColor: 'yellow',
+  },
   flashReverseBtnsWrapper: {
     marginTop: 64,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginHorizontal: 16,
   },
-  takenPhoto: { flex: 1 },
+  takenPhotoWrapper: {
+    flex: 1,
+    marginHorizontal: 16,
+    justifyContent: 'center',
+  },
+  takenPhoto: { height: 240, borderRadius: 8 },
   saveRetakeBtnsWrapper: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    gap: 30,
+    padding: 32,
   },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 16,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    backgroundColor: 'lightblue',
+  },
+  text: { fontSize: 18, fontFamily: 'Roboto-Medium' },
 });

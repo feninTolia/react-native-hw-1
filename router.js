@@ -11,13 +11,10 @@ import PostsScreen from './Screens/MainTabs/PostsScreen';
 import CreatePostScreen from './Screens/MainTabs/CreatePostScreen';
 import ProfileScreen from './Screens/MainTabs/ProfileScreen';
 
-import MyHeader from './Screens/MyHeader';
+import MyHeader from './Screens/Components/MyHeader';
 import TabBarIcon from './Screens/TabBarIcon';
 
-import CameraInterface from './Screens/MainTabs/CameraInterface';
-
 const AuthStack = createStackNavigator();
-const CreatePostStack = createStackNavigator();
 const MainTabs = createBottomTabNavigator();
 
 export default function useRoute(isAuth) {
@@ -61,11 +58,7 @@ export default function useRoute(isAuth) {
         name="PostsScreen"
         component={PostsScreen}
         options={{
-          headerShown: true,
-
-          header: ({ navigation, route, options }) => {
-            return <MyHeader title={'Posts'} logout />;
-          },
+          headerShown: false,
           tabBarIcon: ({ focused, color, size }) => (
             <TabBarIcon
               focused={focused}
@@ -79,9 +72,10 @@ export default function useRoute(isAuth) {
 
       <MainTabs.Screen
         name="CreatePostScreen"
+        component={CreatePostScreen}
         options={{
+          // headerShown: false,
           unmountOnBlur: true,
-          headerLeft: true,
           tabBarStyle: { display: false ? 'none' : 'auto' },
           tabBarIcon: ({ focused, color, size }) => (
             <TabBarIcon
@@ -92,27 +86,7 @@ export default function useRoute(isAuth) {
             />
           ),
         }}
-      >
-        {() => (
-          <CreatePostStack.Navigator>
-            <CreatePostStack.Screen
-              name="CreatePost"
-              component={CreatePostScreen}
-              options={{
-                headerShown: true,
-                header: ({ navigation, route, options }) => {
-                  return <MyHeader title={'Create post'} />;
-                },
-              }}
-            />
-            <CreatePostStack.Screen
-              name="CameraInterface"
-              component={CameraInterface}
-              options={{ headerShown: false }}
-            />
-          </CreatePostStack.Navigator>
-        )}
-      </MainTabs.Screen>
+      />
 
       <MainTabs.Screen
         name="ProfileScreen"

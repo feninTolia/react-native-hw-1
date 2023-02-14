@@ -27,7 +27,12 @@ export default function ProfileScreen() {
               />
             </View>
 
-            <Pressable style={s.logOut} onPress>
+            <Pressable
+              style={s.logOut}
+              onPress={() => {
+                console.log('logout via redux');
+              }}
+            >
               <Image
                 source={require('../../assets/log-out.png')}
                 style={s.logOutIcon}
@@ -67,7 +72,7 @@ const s = StyleSheet.create({
   avatar: {
     width: 120,
     height: 120,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: 'pink',
     borderRadius: 16,
     position: 'absolute',
     top: -60,
