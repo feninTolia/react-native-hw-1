@@ -5,7 +5,9 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  KeyboardAvoidingView,
   View,
+  SafeAreaView,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import * as Location from 'expo-location';
@@ -36,9 +38,11 @@ export default function CommentsScreen({ navigation, route }) {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       setHasLocationPermission(status === 'granted');
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
+      console.log(hasLocationPermission);
+      if (hasLocationPermission) {
+        let location = await Location.getCurrentPositionAsync({});
+        setLocation(location);
+      }
     })();
   }, []);
 
@@ -65,101 +69,104 @@ export default function CommentsScreen({ navigation, route }) {
   };
 
   return (
-    <View
-      style={{
-        ...s.container,
-        marginTop: keyboardIsOpen ? -150 : 0,
-      }}
-    >
+    <SafeAreaView style={{ flex: 1 }}>
       <Pressable onPress={onBackgroundPress} style={s.tapToCloseKeyboardZone}>
-        <Pressable
-          onPress={() => {
-            navigation.navigate('CameraInterface');
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'position' : 'height'}
+          style={{
+            ...s.container,
+            paddingTop: keyboardIsOpen ? 70 : 0,
           }}
         >
-          <View style={s.postImagePreviewWrapper}>
-            <Image source={{ uri: cameraImage }} style={s.postImagePreview} />
-            <View>
-              <View
-                style={{
-                  ...s.cameraIconBG,
-                  opacity: cameraImage ? 0.3 : 1,
-                }}
-              />
-              <Image
-                source={
-                  cameraImage
-                    ? require('../../../assets/camera-white.png')
-                    : require('../../../assets/camera-black.png')
-                }
-                style={s.cameraIcon}
-              />
-            </View>
-          </View>
-        </Pressable>
-        <Text
-          style={s.downloadPhotoBtnText}
-          onPress={() => {
-            navigation.navigate('CameraInterface');
-          }}
-        >
-          {cameraImage ? 'Retake photo' : ' Download photo'}
-        </Text>
-        <View>
-          <TextInput
-            placeholder="Title..."
-            style={s.input}
-            value={formValues.title}
-            onChangeText={(newValue) =>
-              setFormValues((prev) => ({
-                ...prev,
-                title: newValue,
-              }))
-            }
-            onFocus={() => setKeyboardIsOpen(true)}
-          ></TextInput>
-          <TextInput
-            placeholder="Location..."
-            style={s.input}
-            value={formValues.location}
-            onChangeText={(newValue) =>
-              setFormValues((prev) => ({ ...prev, location: newValue }))
-            }
-            onFocus={() => setKeyboardIsOpen(true)}
-          ></TextInput>
-        </View>
-        <Pressable
-          style={({ pressed }) => [
-            s.submitButton,
-            {
-              backgroundColor:
-                formValues.location && formValues.title && cameraImage
-                  ? '#FF6C00'
-                  : '#F6F6F6',
-            },
-          ]}
-          onPress={handleSubmit}
-        >
-          <Text
-            style={{
-              ...s.submitButtonText,
-              color:
-                formValues.location && formValues.title && cameraImage
-                  ? '#fff'
-                  : '#BDBDBD',
+          <Pressable
+            onPress={() => {
+              navigation.navigate('CameraInterface');
             }}
           >
-            Publish
+            <View style={s.postImagePreviewWrapper}>
+              <Image source={{ uri: cameraImage }} style={s.postImagePreview} />
+              <View>
+                <View
+                  style={{
+                    ...s.cameraIconBG,
+                    opacity: cameraImage ? 0.3 : 1,
+                  }}
+                />
+                <Image
+                  source={
+                    cameraImage
+                      ? require('../../../assets/camera-white.png')
+                      : require('../../../assets/camera-black.png')
+                  }
+                  style={s.cameraIcon}
+                />
+              </View>
+            </View>
+          </Pressable>
+          <Text
+            style={s.downloadPhotoBtnText}
+            onPress={() => {
+              navigation.navigate('CameraInterface');
+            }}
+          >
+            {cameraImage ? 'Retake photo' : ' Download photo'}
           </Text>
-        </Pressable>
-        <Pressable style={s.trashButton} onPress={handleFormClean}>
-          <Image
-            source={require('../../../assets/trash-2.png')}
-            style={s.trashButtonIcon}
-          />
-        </Pressable>
+          <View>
+            <TextInput
+              placeholder="Title..."
+              style={s.input}
+              value={formValues.title}
+              onChangeText={(newValue) =>
+                setFormValues((prev) => ({
+                  ...prev,
+                  title: newValue,
+                }))
+              }
+              onFocus={() => setKeyboardIsOpen(true)}
+            ></TextInput>
+            <TextInput
+              placeholder="Location..."
+              style={s.input}
+              value={formValues.location}
+              onChangeText={(newValue) =>
+                setFormValues((prev) => ({ ...prev, location: newValue }))
+              }
+              onFocus={() => setKeyboardIsOpen(true)}
+            ></TextInput>
+          </View>
+          <Pressable
+            style={({ pressed }) => [
+              s.submitButton,
+              {
+                backgroundColor:
+                  formValues.location && formValues.title && cameraImage
+                    ? '#FF6C00'
+                    : '#F6F6F6',
+              },
+            ]}
+            onPress={handleSubmit}
+          >
+            <Text
+              style={{
+                ...s.submitButtonText,
+                color:
+                  formValues.location && formValues.title && cameraImage
+                    ? '#fff'
+                    : '#BDBDBD',
+              }}
+            >
+              Publish
+            </Text>
+          </Pressable>
+          <Pressable style={s.trashButton} onPress={handleFormClean}>
+            <Image
+              source={require('../../../assets/trash-2.png')}
+              style={s.trashButtonIcon}
+            />
+          </Pressable>
+        </KeyboardAvoidingView>
       </Pressable>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -234,7 +241,7 @@ const s = StyleSheet.create({
   },
   trashButton: {
     position: 'absolute',
-    bottom: 16,
+    bottom: -150, //temporaraly
     right: '50%',
     transform: [{ translateX: 35 }],
 

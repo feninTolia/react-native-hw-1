@@ -12,6 +12,7 @@ import {
   Pressable,
   Dimensions,
   useWindowDimensions,
+  SafeAreaView,
 } from 'react-native';
 
 const initialFormState = {
@@ -23,7 +24,6 @@ export default function LoginScreen({ navigation }) {
   const [formValues, setFormValues] = useState(initialFormState);
 
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
-  const [isLastFieldFocused, setIsLastFieldFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const [dimensions, setDimensions] = useState(Dimensions.get('window').width);
@@ -36,101 +36,100 @@ export default function LoginScreen({ navigation }) {
   const onBackgroundPress = () => {
     Keyboard.dismiss();
     setKeyboardIsOpen(false);
-    setIsLastFieldFocused(false);
   };
 
   const handleSubmit = () => {
     if (formValues.email !== '' && formValues.password !== '') {
       console.log(formValues);
+      Keyboard.dismiss();
       setKeyboardIsOpen(false);
-      setIsLastFieldFocused(false);
+
       setFormValues(initialFormState);
     }
   };
 
   return (
-    <View style={styles.container0}>
-      <Pressable onPress={onBackgroundPress} style={{ width: '100%' }}>
-        <ImageBackground
-          source={require('../../assets/regBG.png')}
-          style={styles.bgImg}
+    <Pressable
+      onPress={onBackgroundPress}
+      style={styles.container}
+      // style={{ width: '100%', height: '100%', backgroundColor: 'blue' }}
+    >
+      <ImageBackground
+        source={require('../../assets/regBG.png')}
+        style={styles.bgImg}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'position' : 'height'}
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          <View
+            style={{
+              ...styles.formWrapper,
+              // marginTop: keyboardIsOpen ? -240 : 0,
+              paddingBottom: keyboardIsOpen ? 20 : 145,
+              paddingHorizontal: dimensions > 600 ? 96 : 16,
+            }}
           >
-            <View
-              style={{
-                ...styles.container,
-                marginBottom: keyboardIsOpen && !isLastFieldFocused ? -240 : 0,
-                paddingBottom: isLastFieldFocused ? 20 : 145,
-                paddingHorizontal: dimensions > 600 ? 96 : 16,
+            <Text style={styles.header}>Sign in</Text>
+
+            <View style={styles.wrapper}>
+              <TextInput
+                placeholder="Email"
+                style={styles.input}
+                value={formValues.email}
+                onChangeText={(newValue) =>
+                  setFormValues((prev) => ({ ...prev, email: newValue }))
+                }
+                onFocus={() => {
+                  setKeyboardIsOpen(true);
+                }}
+              />
+            </View>
+            <View style={styles.wrapper}>
+              <TextInput
+                placeholder="Password"
+                style={styles.input}
+                secureTextEntry={isPasswordVisible ? false : true}
+                value={formValues.password}
+                onChangeText={(newValue) =>
+                  setFormValues((prev) => ({ ...prev, password: newValue }))
+                }
+                onFocus={() => setKeyboardIsOpen(true)}
+              />
+              <TouchableOpacity
+                style={styles.showPassword}
+                onPress={() => setIsPasswordVisible((prev) => !prev)}
+              >
+                <Text style={styles.showPasswordText}>
+                  {isPasswordVisible ? 'Hide' : 'Show'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity
+              style={styles.button}
+              activeOpacity="0.75"
+              onPress={handleSubmit}
+            >
+              <Text style={styles.buttonText}>Sign in</Text>
+            </TouchableOpacity>
+            <Text
+              style={styles.linkToLogin}
+              onPress={() => {
+                setKeyboardIsOpen(false);
+                // navigation.navigate('RegistrationScreen');
               }}
             >
-              <Text style={styles.header}>Sign in</Text>
-
-              <View style={styles.wrapper}>
-                <TextInput
-                  placeholder="Email"
-                  style={styles.input}
-                  value={formValues.email}
-                  onChangeText={(newValue) =>
-                    setFormValues((prev) => ({ ...prev, email: newValue }))
-                  }
-                  onFocus={() => {
-                    setKeyboardIsOpen(true);
-                    setIsLastFieldFocused(false);
-                  }}
-                />
-              </View>
-              <View style={styles.wrapper}>
-                <TextInput
-                  placeholder="Password"
-                  style={styles.input}
-                  secureTextEntry={isPasswordVisible ? false : true}
-                  value={formValues.password}
-                  onChangeText={(newValue) =>
-                    setFormValues((prev) => ({ ...prev, password: newValue }))
-                  }
-                  onFocus={() => setIsLastFieldFocused(true)}
-                />
-                <TouchableOpacity
-                  style={styles.showPassword}
-                  onPress={() => setIsPasswordVisible((prev) => !prev)}
-                >
-                  <Text style={styles.showPasswordText}>
-                    {isPasswordVisible ? 'Hide' : 'Show'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <TouchableOpacity
-                style={styles.button}
-                activeOpacity="0.75"
-                onPress={handleSubmit}
-              >
-                <Text style={styles.buttonText}>Sign in</Text>
-              </TouchableOpacity>
-              <Text
-                style={styles.linkToLogin}
-                onPress={() => {
-                  setKeyboardIsOpen(false);
-                  setIsLastFieldFocused(false);
-                  navigation.navigate('RegistrationScreen');
-                }}
-              >
-                Do not have an account? Register
-              </Text>
-            </View>
-          </KeyboardAvoidingView>
-        </ImageBackground>
-      </Pressable>
-    </View>
+              Do not have an account? Register
+            </Text>
+          </View>
+        </KeyboardAvoidingView>
+      </ImageBackground>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  container0: {
+  container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -139,7 +138,7 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'flex-end',
   },
-  container: {
+  formWrapper: {
     backgroundColor: '#fff',
     paddingTop: 32,
     borderTopEndRadius: 25,

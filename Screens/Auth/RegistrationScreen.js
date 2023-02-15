@@ -48,6 +48,7 @@ export default function RegistrationScreen({ navigation }) {
       formValues.password !== ''
     ) {
       console.log(formValues);
+      Keyboard.dismiss();
       setKeyboardIsOpen(false);
       setIsLastFieldFocused(false);
       setFormValues(initialFormState);
@@ -63,14 +64,14 @@ export default function RegistrationScreen({ navigation }) {
           style={styles.bgImg}
         >
           <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            behavior={Platform.OS === 'ios' ? 'position' : 'height'}
           >
             <View
               style={{
                 ...styles.container,
-                marginBottom: keyboardIsOpen && !isLastFieldFocused ? -180 : 0,
-                paddingBottom: isLastFieldFocused ? 20 : 80,
-                paddingHorizontal: dimensions > 600 ? 96 : 16,
+                marginBottom: keyboardIsOpen ? -190 : 0,
+                paddingBottom: isLastFieldFocused ? 170 : 80,
+                // paddingHorizontal: dimensions > 600 ? 96 : 16,
               }}
             >
               <View style={styles.avatar}>
@@ -119,7 +120,9 @@ export default function RegistrationScreen({ navigation }) {
                   onChangeText={(newValue) =>
                     setFormValues((prev) => ({ ...prev, password: newValue }))
                   }
-                  onFocus={() => setIsLastFieldFocused(true)}
+                  onFocus={() => {
+                    setIsLastFieldFocused(true), setKeyboardIsOpen(true);
+                  }}
                 />
                 <TouchableOpacity
                   style={styles.showPassword}
@@ -140,7 +143,7 @@ export default function RegistrationScreen({ navigation }) {
                 onPress={() => {
                   setKeyboardIsOpen(false);
                   setIsLastFieldFocused(false);
-                  navigation.navigate('LoginScreen');
+                  // navigation.navigate('LoginScreen');
                 }}
               >
                 Already have an account? Log in
@@ -175,7 +178,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 120,
     height: 120,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: 'pink',
     borderRadius: 16,
     position: 'absolute',
     top: -60,
