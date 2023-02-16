@@ -14,9 +14,11 @@ import {
   Dimensions,
   useWindowDimensions,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { authSignUpUser } from '../redux/auth/authOperations';
 
 const initialFormState = {
-  login: '',
+  nickname: '',
   email: '',
   password: '',
 };
@@ -31,6 +33,8 @@ export default function RegistrationScreen({ navigation }) {
   const [dimensions, setDimensions] = useState(Dimensions.get('window').width);
   const { _, width } = useWindowDimensions();
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     setDimensions(width);
   }, [width]);
@@ -44,15 +48,14 @@ export default function RegistrationScreen({ navigation }) {
   const handleSubmit = () => {
     if (
       formValues.email !== '' &&
-      formValues.login !== '' &&
+      formValues.nickname !== '' &&
       formValues.password !== ''
     ) {
-      console.log(formValues);
+      dispatch(authSignUpUser(formValues));
       Keyboard.dismiss();
       setKeyboardIsOpen(false);
       setIsLastFieldFocused(false);
       setFormValues(initialFormState);
-      navigation.navigate('HomeScreen');
     }
   };
 
@@ -87,9 +90,9 @@ export default function RegistrationScreen({ navigation }) {
                   placeholder="Login"
                   style={styles.input}
                   autoComplete="password"
-                  value={formValues.login}
+                  value={formValues.nickname}
                   onChangeText={(newValue) =>
-                    setFormValues((prev) => ({ ...prev, login: newValue }))
+                    setFormValues((prev) => ({ ...prev, nickname: newValue }))
                   }
                   onFocus={() => {
                     setKeyboardIsOpen(true);
@@ -143,7 +146,7 @@ export default function RegistrationScreen({ navigation }) {
                 onPress={() => {
                   setKeyboardIsOpen(false);
                   setIsLastFieldFocused(false);
-                  // navigation.navigate('LoginScreen');
+                  navigation.navigate('LoginScreen');
                 }}
               >
                 Already have an account? Log in

@@ -1,8 +1,10 @@
 import React from 'react';
-import { Link } from '@react-navigation/native';
 import { StyleSheet, View, Text, Image, Pressable } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { authSignOutUser } from '../redux/auth/authOperations';
 
 export default function MyHeader({ title, goBack, logout }) {
+  const dispatch = useDispatch();
   return (
     <View style={styles?.container}>
       {goBack && (
@@ -26,6 +28,7 @@ export default function MyHeader({ title, goBack, logout }) {
           style={styles.logOut}
           onPress={() => {
             console.log('logout via redux');
+            dispatch(authSignOutUser());
           }}
         >
           <Image

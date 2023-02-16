@@ -38,10 +38,12 @@ export default function CommentsScreen({ navigation, route }) {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       setHasLocationPermission(status === 'granted');
-      console.log(hasLocationPermission);
+
       if (hasLocationPermission) {
         let location = await Location.getCurrentPositionAsync({});
         setLocation(location);
+      } else {
+        alert('Your location will not be detected');
       }
     })();
   }, []);

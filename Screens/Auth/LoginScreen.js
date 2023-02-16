@@ -14,6 +14,8 @@ import {
   useWindowDimensions,
   SafeAreaView,
 } from 'react-native';
+import { useDispatch } from 'react-redux';
+import { authSignInUser } from '../redux/auth/authOperations';
 
 const initialFormState = {
   email: '',
@@ -29,6 +31,8 @@ export default function LoginScreen({ navigation }) {
   const [dimensions, setDimensions] = useState(Dimensions.get('window').width);
   const { _, width } = useWindowDimensions();
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     setDimensions(width);
   }, [width]);
@@ -40,7 +44,7 @@ export default function LoginScreen({ navigation }) {
 
   const handleSubmit = () => {
     if (formValues.email !== '' && formValues.password !== '') {
-      console.log(formValues);
+      dispatch(authSignInUser(formValues));
       Keyboard.dismiss();
       setKeyboardIsOpen(false);
 
@@ -115,7 +119,7 @@ export default function LoginScreen({ navigation }) {
               style={styles.linkToLogin}
               onPress={() => {
                 setKeyboardIsOpen(false);
-                // navigation.navigate('RegistrationScreen');
+                navigation.navigate('RegistrationScreen');
               }}
             >
               Do not have an account? Register

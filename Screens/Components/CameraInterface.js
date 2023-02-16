@@ -6,6 +6,8 @@ import Button from './Button';
 
 export default function CameraInterface({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
+  const [hasMediaLibraryPermission, setHasMediaLibraryPermission] =
+    useState(null);
   const [image, setImage] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
@@ -13,7 +15,8 @@ export default function CameraInterface({ navigation }) {
 
   useEffect(() => {
     (async () => {
-      MediaLibrary.requestPermissionsAsync();
+      const mediaLibraryStatus = await MediaLibrary.requestPermissionsAsync();
+      setHasMediaLibraryPermission(mediaLibraryStatus.status === 'granted');
       const cameraStatus = await Camera.requestCameraPermissionsAsync();
       setHasCameraPermission(cameraStatus.status === 'granted');
     })();
@@ -48,6 +51,23 @@ export default function CameraInterface({ navigation }) {
       <View style={{ alignItems: 'center', justifyContent: 'center' }}>
         <Text>
           Camera permissinos has not granted. Please change that on settings
+        </Text>
+      </View>
+    );
+  }
+  if (hasMediaLibraryPermission === false) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: 32,
+        }}
+      >
+        <Text>
+          Media library permissinos has not granted. Please change that on
+          settings
         </Text>
       </View>
     );
