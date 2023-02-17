@@ -1,3 +1,4 @@
+import { collection, doc, getDocs, onSnapshot } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
@@ -7,17 +8,34 @@ import {
   FlatList,
   Pressable,
 } from 'react-native';
+import { log } from 'react-native-reanimated';
+import { db } from '../../../firebase/config';
 
 import Post from '../../Components/Post';
 
 export default function DefaultPostsScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
+  const getAllPosts = async () => {
+    try {
+      const colRef = collection(db, 'posts');
+
+      const unsub = onSnapshot(colRef, (snapshot) => {
+        setPosts(
+          snapshot.docs.map((doc) => ({ ...doc.data(), postId: doc.id }))
+        );
+      });
+    } catch (error) {
+      console.log(error);
     }
-  }, [route.params]);
+  };
+
+  useEffect(() => {
+    getAllPosts();
+    return () => {
+      unsub();
+    };
+  }, []);
 
   return (
     <View style={s.container}>
@@ -38,16 +56,15 @@ export default function DefaultPostsScreen({ route, navigation }) {
       </Pressable>
 
       <FlatList
-        data={posts.sort(
-          (a, b) => new Date(b.formValues.date) - new Date(a.formValues.date)
-        )}
-        keyExtractor={(item) => item.formValues.date}
+        data={posts.sort((a, b) => new Date(b.date) - new Date(a.date))}
+        keyExtractor={(item) => item.date}
         renderItem={({ item }) => (
           <Post
-            imageUri={item.cameraImage}
-            title={item.formValues.title}
-            location={item.formValues.location}
-            mapNavigate={item.location}
+            imageUri={item.photo}
+            title={item.title}
+            location={item.location}
+            mapNavigate={item.locationCoords}
+            postId={item.postId}
           />
         )}
       />

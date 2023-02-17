@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Pressable,
@@ -9,22 +9,63 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   SafeAreaView,
+  FlatList,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { addDoc, collection, doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../../firebase/config';
 import SingleComment from '../../Components/SingleComment';
 
 export default function CommentsScreen({ navigation, route }) {
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(null);
   const [commentValue, setCommentValue] = useState('');
+  const [coments, setComents] = useState([]);
+
+  const { postId, imageUri } = route.params;
+
+  const docRef = doc(db, 'posts', postId);
+  const colRef = collection(docRef, 'comments');
+
+  const createComment = async () => {
+    try {
+      await addDoc(colRef, {
+        comment: commentValue,
+        date: Date.now(),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const getAllComments = async () => {
+    try {
+      const unsub = onSnapshot(colRef, (snapshot) => {
+        setComents(
+          snapshot.docs.map((doc) => ({ ...doc.data(), commentId: doc.id }))
+        );
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getAllComments();
+
+    return () => {
+      // unsub();
+    };
+  }, []);
 
   const onBackgroundPress = () => {
     Keyboard.dismiss();
     setKeyboardIsOpen(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (commentValue) {
-      console.log(commentValue);
+      await createComment();
+      setCommentValue('');
+      onBackgroundPress();
     }
   };
 
@@ -35,11 +76,19 @@ export default function CommentsScreen({ navigation, route }) {
           behavior={Platform.OS === 'ios' ? 'position' : 'height'}
           style={{ ...s.container, marginTop: keyboardIsOpen ? -80 : 0 }}
         >
-          <Image source={{ uri: route.params.imageUri }} style={s.image} />
+          <Image source={{ uri: imageUri }} style={s.image} />
 
-          <SingleComment />
-          <SingleComment />
-          <SingleComment />
+          <FlatList
+            data={coments.sort((a, b) => new Date(b.date) - new Date(a.date))}
+            keyExtractor={(item) => item.commentId}
+            renderItem={({ item }) => (
+              <SingleComment
+                imageUri={item.photo}
+                title={item.comment}
+                date={item.date}
+              />
+            )}
+          />
 
           <View style={s.inputGroupWrapper}>
             <TextInput
@@ -79,7 +128,6 @@ const s = StyleSheet.create({
     paddingTop: 32,
     flex: 1,
     backgroundColor: '#fff',
-    backgroundColor: 'green',
   },
   image: {
     width: '100%',
@@ -92,7 +140,6 @@ const s = StyleSheet.create({
     // position: 'absolute',
     width: '100%',
     marginTop: 16,
-    backgroundColor: 'red',
     marginBottom: 32,
     // bottom: 0,
   },

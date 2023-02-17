@@ -7,6 +7,7 @@ export default function Post({
   title = 'some text',
   location = 'somewhere',
   mapNavigate,
+  postId,
 }) {
   return (
     <View style={s.container}>
@@ -16,7 +17,7 @@ export default function Post({
         <View style={{ flexDirection: 'row', alignItems: 'baseline' }}>
           <View style={s.commentsWrapper}>
             <Link
-              to={{ screen: 'CommentsScreen', params: { imageUri } }}
+              to={{ screen: 'CommentsScreen', params: { imageUri, postId } }}
               style={{ width: 18, marginRight: 8 }}
             >
               <Image

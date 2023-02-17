@@ -1,16 +1,15 @@
 import React from 'react';
 import { Image, StyleSheet, Text, View } from 'react-native';
 
-export default function SingleComment() {
+export default function SingleComment({ title, date }) {
   return (
     <View style={s.container}>
       <Image source style={s.avatar} />
       <View style={s.commentBodyWrapper}>
-        <Text>
-          Comment about smth zfdzfdzfzdf zsdsdf sdfsdf weterg grerg erg erhet
-          hfyj y
+        <Text>{title}</Text>
+        <Text style={s.dateStamp}>
+          {date ? new Date(date).toLocaleString() : ''}
         </Text>
-        <Text style={s.dateStamp}>16 June, 2020 | 09:37</Text>
       </View>
     </View>
   );

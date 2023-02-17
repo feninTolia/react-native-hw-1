@@ -12,6 +12,11 @@ import {
 import { TextInput } from 'react-native-gesture-handler';
 import * as Location from 'expo-location';
 
+import { db, storage } from '../../../firebase/config';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { addDoc, collection } from 'firebase/firestore';
+import { useSelector } from 'react-redux';
+
 const initialFormState = {
   title: '',
   location: '',
@@ -23,7 +28,9 @@ export default function CommentsScreen({ navigation, route }) {
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
   const [cameraImage, setCameraImage] = useState(null);
   const [location, setLocation] = useState(null);
-  const [hasLocationPermission, setHasLocationPermission] = useState(null);
+  const [hasLocationPermission, setHasLocationPermission] = useState('');
+
+  const { userID, nickname } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (route.params?.image) {
@@ -37,24 +44,76 @@ export default function CommentsScreen({ navigation, route }) {
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
-      setHasLocationPermission(status === 'granted');
+      setHasLocationPermission(status.toString());
 
-      if (hasLocationPermission) {
+      if (hasLocationPermission === 'granted') {
         let location = await Location.getCurrentPositionAsync({});
         setLocation(location);
-      } else {
-        alert('Your location will not be detected');
+      }
+
+      if (hasLocationPermission === 'denied') {
+        alert('Location permission is denied, change that in settings');
       }
     })();
-  }, []);
+  }, [hasLocationPermission]);
 
   const onBackgroundPress = () => {
     Keyboard.dismiss();
     setKeyboardIsOpen(false);
   };
 
-  const handleSubmit = () => {
+  const uploadImageToServer = async () => {
+    const response = await fetch(cameraImage);
+    const file = await response.blob();
+
+    const uniquePostID = Date.now().toString();
+    const pathReference = ref(storage, `postImage/${uniquePostID}`);
+
+    await uploadBytes(pathReference, file).catch((e) => console.log(e.message));
+    const processedPhoto = await getDownloadURL(pathReference)
+      .then((url) => {
+        return url;
+      })
+      .catch((error) => {
+        switch (error.code) {
+          case 'storage/object-not-found':
+            console.log('File does not exist');
+            break;
+          case 'storage/unauthorized':
+            console.log(`User doesn't have permission to access the object`);
+            break;
+          case 'storage/canceled':
+            console.log(`User canceled the upload`);
+            break;
+          case 'storage/unknown':
+            console.log(`Unknown error occurred, inspect the server response`);
+            break;
+        }
+      });
+
+    return processedPhoto;
+  };
+
+  const uploadPostToServer = async () => {
+    try {
+      const photo = await uploadImageToServer();
+      const createPost = await addDoc(collection(db, 'posts'), {
+        userID,
+        nickname,
+        date: formValues.date,
+        photo,
+        title: formValues.title,
+        location: formValues.location,
+        locationCoords: location.coords,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleSubmit = async () => {
     if (formValues.location && formValues.title && cameraImage) {
+      uploadPostToServer();
       navigation.navigate('DefaultPostsScreen', {
         cameraImage,
         formValues,

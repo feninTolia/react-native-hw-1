@@ -12,7 +12,7 @@ export default function MapViewScreen({ route }) {
     );
   }
 
-  const { latitude, longitude } = route.params.mapNavigate?.coords;
+  const { latitude, longitude } = route.params.mapNavigate;
 
   return (
     <View style={styles.container}>

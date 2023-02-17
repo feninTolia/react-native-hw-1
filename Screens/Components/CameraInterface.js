@@ -3,9 +3,6 @@ import { Image, StyleSheet, Text, View, Pressable } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 
-import { storage } from '../../firebase/config';
-import { ref, uploadBytes } from 'firebase/storage';
-
 export default function CameraInterface({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] =
@@ -36,27 +33,10 @@ export default function CameraInterface({ navigation }) {
     }
   };
 
-  const uploadImageToServer = async () => {
-    const response = await fetch(image);
-    const file = await response.blob();
-
-    const uniquePostID = Date.now().toString();
-
-    const pathReference = ref(storage, `postImage/${uniquePostID}`);
-
-    uploadBytes(pathReference, file)
-      .then((snapshot) => {
-        console.log('Uploaded a blob or file!');
-        console.log('snapshot', snapshot);
-      })
-      .catch((e) => console.log(e.message));
-  };
-
   const saveImage = async () => {
     if (image) {
       try {
         await MediaLibrary.createAssetAsync(image);
-        uploadImageToServer();
         setImage(null);
         navigation.navigate('DefaultCreatePostScreen', { image });
       } catch (error) {
