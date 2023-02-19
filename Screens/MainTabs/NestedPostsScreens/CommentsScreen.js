@@ -10,6 +10,7 @@ import {
   Keyboard,
   SafeAreaView,
   FlatList,
+  Dimensions,
 } from 'react-native';
 import { addDoc, collection, doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../../firebase/config';
@@ -19,6 +20,7 @@ export default function CommentsScreen({ navigation, route }) {
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(null);
   const [commentValue, setCommentValue] = useState('');
   const [coments, setComents] = useState([]);
+  const [vh, setVh] = useState(Dimensions.get('window').height);
 
   const { postId, imageUri } = route.params;
 
@@ -69,56 +71,61 @@ export default function CommentsScreen({ navigation, route }) {
     }
   };
 
+  console.log(vh);
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <Pressable onPress={onBackgroundPress} style={{ flex: 1 }}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'position' : 'height'}
-          style={{ ...s.container, marginTop: keyboardIsOpen ? -80 : 0 }}
-        >
-          <Image source={{ uri: imageUri }} style={s.image} />
-
-          <FlatList
-            data={coments.sort((a, b) => new Date(b.date) - new Date(a.date))}
-            keyExtractor={(item) => item.commentId}
-            renderItem={({ item }) => (
-              <SingleComment
-                imageUri={item.photo}
-                title={item.comment}
-                date={item.date}
-              />
-            )}
-          />
-
-          <View style={s.inputGroupWrapper}>
-            <TextInput
-              style={{ ...s.input }}
-              placeholder="Comment..."
-              onFocus={() => {
-                setKeyboardIsOpen(true);
-              }}
-              value={commentValue}
-              onChangeText={(newValue) => setCommentValue(newValue)}
-            />
-            <Pressable
-              style={({ pressed }) => [
-                s.submitBtn,
-                {
-                  backgroundColor:
-                    pressed && commentValue ? 'rgb(210, 230, 255)' : '#FF6C00',
-                },
-              ]}
-              onPress={handleSubmit}
-            >
-              <Image
-                source={require('../../../assets/arrowUp.png')}
-                style={{ width: 10, height: 14 }}
-              />
-            </Pressable>
-          </View>
-        </KeyboardAvoidingView>
+    // <KeyboardAvoidingView
+    //   behavior={Platform.OS === 'ios' ? 'position' : 'height'}
+    //   style={{ flex: 1, backgroundColor: 'green' }}
+    // >
+    <View
+      style={{
+        ...s.container,
+      }}
+    >
+      <Pressable onPress={onBackgroundPress}>
+        <Image source={{ uri: imageUri }} style={s.image} />
       </Pressable>
-    </SafeAreaView>
+      <FlatList
+        // contentContainerStyle={{}}
+        style={{ flex: 'auto' }}
+        data={coments.sort((a, b) => new Date(b.date) - new Date(a.date))}
+        keyExtractor={(item) => item.commentId}
+        renderItem={({ item }) => (
+          <SingleComment
+            imageUri={item.photo}
+            title={item.comment}
+            date={item.date}
+          />
+        )}
+      />
+      <View style={s.inputGroupWrapper}>
+        <TextInput
+          style={{ ...s.input }}
+          placeholder="Comment..."
+          onFocus={() => {
+            setKeyboardIsOpen(true);
+          }}
+          value={commentValue}
+          onChangeText={(newValue) => setCommentValue(newValue)}
+        />
+        <Pressable
+          style={({ pressed }) => [
+            s.submitBtn,
+            {
+              backgroundColor:
+                pressed && commentValue ? 'rgb(210, 230, 255)' : '#FF6C00',
+            },
+          ]}
+          onPress={handleSubmit}
+        >
+          <Image
+            source={require('../../../assets/arrowUp.png')}
+            style={{ width: 10, height: 14 }}
+          />
+        </Pressable>
+      </View>
+    </View>
+    // </KeyboardAvoidingView>
   );
 }
 
@@ -137,16 +144,15 @@ const s = StyleSheet.create({
     marginBottom: 32,
   },
   inputGroupWrapper: {
-    // position: 'absolute',
     width: '100%',
     marginTop: 16,
-    marginBottom: 32,
-    // bottom: 0,
+    paddingBottom: 64,
   },
   input: {
     width: '100%',
     height: 50,
     padding: 16,
+    marginBottom: -32,
 
     fontSize: 16,
     fontFamily: 'Roboto-Regular',

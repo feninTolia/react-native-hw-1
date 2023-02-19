@@ -8,7 +8,6 @@ import {
   FlatList,
   Pressable,
 } from 'react-native';
-import { log } from 'react-native-reanimated';
 import { db } from '../../../firebase/config';
 
 import Post from '../../Components/Post';
