@@ -6,10 +6,16 @@ import { authSignOutUser } from '../redux/auth/authOperations';
 export default function MyHeader({ title, goBack, logout }) {
   const dispatch = useDispatch();
   return (
-    <View style={styles?.container}>
+    <View style={s.container}>
       {goBack && (
         <Pressable
-          style={{ position: 'absolute', left: 16, top: 54 }}
+          hitSlop={8}
+          style={({ pressed }) => [
+            s.goBackArrowBtn,
+            {
+              backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'transparent',
+            },
+          ]}
           onPress={() => {
             goBack();
           }}
@@ -21,11 +27,15 @@ export default function MyHeader({ title, goBack, logout }) {
         </Pressable>
       )}
 
-      <Text style={styles.text}> {title}</Text>
+      <Text style={s.text}> {title}</Text>
       {logout && (
         <Pressable
-          // to={{ screen: 'LoginScreen', params: { id: 'jane' } }}
-          style={styles.logOut}
+          style={({ pressed }) => [
+            s.logOut,
+            {
+              backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'transparent',
+            },
+          ]}
           onPress={() => {
             dispatch(authSignOutUser());
           }}
@@ -40,7 +50,7 @@ export default function MyHeader({ title, goBack, logout }) {
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   container: {
     position: 'relative',
     paddingTop: 55,
@@ -53,9 +63,18 @@ const styles = StyleSheet.create({
   text: { fontSize: 17, fontFamily: 'Roboto-Medium' },
   logOut: {
     position: 'absolute',
-    height: 24,
-    width: 24,
-    bottom: 10,
+    // height: 24,
+    // width: 24,
+    bottom: 4,
     right: 16,
+    borderRadius: 50,
+    padding: 8,
+  },
+  goBackArrowBtn: {
+    position: 'absolute',
+    left: 12,
+    top: 50,
+    borderRadius: 50,
+    padding: 4,
   },
 });

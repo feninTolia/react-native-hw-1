@@ -24,7 +24,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authSignOutUser } from '../redux/auth/authOperations';
 
 const postsRef = collection(db, 'posts');
-const userID = `zabQhUFmJAheFE5XvuBaseTbuDn1`;
 
 export default function ProfileScreen() {
   const [posts, setPosts] = useState([]);
@@ -54,45 +53,45 @@ export default function ProfileScreen() {
         source={require('../../assets/regBG.png')}
         style={s.bgImg}
       >
-        <ScrollView>
-          <View style={s.wrapper}>
-            <View style={s.avatar}>
-              <Image />
-              <Image
-                source={require('../../assets/add.png')}
-                style={s.addAvatarBtn}
-              />
-            </View>
-
-            <Pressable
-              style={s.logOut}
-              onPress={() => {
-                console.log('logout via redux');
-                dispatch(authSignOutUser());
-              }}
-            >
-              <Image
-                source={require('../../assets/log-out.png')}
-                style={s.logOutIcon}
-              />
-            </Pressable>
-            <Text style={s.header}>{nickname}</Text>
-
-            <FlatList
-              data={posts.sort((a, b) => new Date(b.date) - new Date(a.date))}
-              keyExtractor={(item) => item.date}
-              renderItem={({ item }) => (
-                <Post
-                  imageUri={item.photo}
-                  title={item.title}
-                  location={item.location}
-                  mapNavigate={item.locationCoords}
-                  postId={item.postId}
-                />
-              )}
+        {/* <ScrollView> */}
+        <View style={s.wrapper}>
+          <View style={s.avatar}>
+            <Image />
+            <Image
+              source={require('../../assets/add.png')}
+              style={s.addAvatarBtn}
             />
           </View>
-        </ScrollView>
+
+          <Pressable
+            style={s.logOut}
+            onPress={() => {
+              console.log('logout via redux');
+              dispatch(authSignOutUser());
+            }}
+          >
+            <Image
+              source={require('../../assets/log-out.png')}
+              style={s.logOutIcon}
+            />
+          </Pressable>
+          <Text style={s.header}>{nickname}</Text>
+
+          <FlatList
+            data={posts.sort((a, b) => new Date(b.date) - new Date(a.date))}
+            keyExtractor={(item) => item.date}
+            renderItem={({ item }) => (
+              <Post
+                imageUri={item.photo}
+                title={item.title}
+                location={item.location}
+                mapNavigate={item.locationCoords}
+                postId={item.postId}
+              />
+            )}
+          />
+        </View>
+        {/* </ScrollView> */}
       </ImageBackground>
     </View>
   );
