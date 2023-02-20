@@ -19,7 +19,11 @@ export default function Post({
 
       <View style={s.iconsWrapper}>
         <Pressable
-          style={s.commentsWrapper}
+          hitSlop={8}
+          style={({ pressed }) => [
+            s.commentsWrapper,
+            { backgroundColor: pressed ? 'rgb(210, 230, 255)' : 'transparent' },
+          ]}
           onPress={() => {
             navigation.navigate('CommentsScreen', { imageUri, postId });
           }}
@@ -40,6 +44,7 @@ export default function Post({
         </View>
 
         <Pressable
+          hitSlop={8}
           style={s.locationWrapper}
           onPress={() => {
             navigation.navigate('MapViewScreen', { mapNavigate });
@@ -79,6 +84,8 @@ const s = StyleSheet.create({
   commentsWrapper: {
     flexDirection: 'row',
     marginRight: 27,
+    padding: 8,
+    borderRadius: 10,
   },
 
   locationWrapper: {

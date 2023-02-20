@@ -63,18 +63,16 @@ const s = StyleSheet.create({
   text: { fontSize: 17, fontFamily: 'Roboto-Medium' },
   logOut: {
     position: 'absolute',
-    // height: 24,
-    // width: 24,
     bottom: 4,
     right: 16,
-    borderRadius: 50,
+    borderRadius: 10,
     padding: 8,
   },
   goBackArrowBtn: {
     position: 'absolute',
     left: 12,
     top: 50,
-    borderRadius: 50,
+    borderRadius: 10,
     padding: 4,
   },
 });

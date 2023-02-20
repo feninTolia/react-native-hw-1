@@ -55,11 +55,13 @@ const authStateChangeUser = () => async (dispatch, getState) => {
   try {
     onAuthStateChanged(auth, (user) => {
       if (user) {
+        // console.log(`user---------`, user);
         dispatch(
           authSlice.actions.updateUserProfile({
             userID: user.uid,
             nickname: user.displayName,
             email: user.email,
+            photoURL: user.photoURL,
           })
         );
         dispatch(authSlice.actions.authStateChange({ stateChange: true }));
@@ -70,4 +72,20 @@ const authStateChangeUser = () => async (dispatch, getState) => {
   }
 };
 
-export { authSignUpUser, authSignInUser, authSignOutUser, authStateChangeUser };
+const updateUserAvatar = (photoURL) => async (dispatch, getState) => {
+  await updateProfile(auth.currentUser, { photoURL });
+  console.log('auth.currentUser---------------', auth.currentUser);
+  dispatch(
+    authSlice.actions.updateUserAvatar({
+      photoURL: auth.currentUser.photoURL,
+    })
+  );
+};
+
+export {
+  authSignUpUser,
+  authSignInUser,
+  authSignOutUser,
+  authStateChangeUser,
+  updateUserAvatar,
+};

@@ -24,7 +24,7 @@ export default function CreatePostScreen() {
       <CreatePostStack.Screen
         name="CameraInterface"
         component={CameraInterface}
-        options={{ headerShown: false }}
+        options={{ headerShown: false, unmountOnBlur: true }}
       />
     </CreatePostStack.Navigator>
   );

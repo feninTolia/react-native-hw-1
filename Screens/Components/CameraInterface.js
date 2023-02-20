@@ -76,6 +76,8 @@ export default function CameraInterface({ navigation }) {
     );
   }
 
+  console.log(addProfilePhoto);
+
   return (
     <View style={s.container}>
       {!image ? (
@@ -107,7 +109,9 @@ export default function CameraInterface({ navigation }) {
               <Text style={s.text}>⚡</Text>
             </Pressable>
           </View>
-          <View style={s.shootingArea}></View>
+          <View
+            style={{ ...s.shootingArea, height: addProfilePhoto ? 400 : 240 }}
+          ></View>
         </Camera>
       ) : (
         <View style={s.takenPhotoWrapper}>
