@@ -10,9 +10,14 @@ import {
   Keyboard,
   SafeAreaView,
   FlatList,
-  Dimensions,
 } from 'react-native';
-import { addDoc, collection, doc, onSnapshot } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from 'firebase/firestore';
 import { db } from '../../../firebase/config';
 import SingleComment from '../../Components/SingleComment';
 
@@ -20,7 +25,6 @@ export default function CommentsScreen({ navigation, route }) {
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(null);
   const [commentValue, setCommentValue] = useState('');
   const [coments, setComents] = useState([]);
-  const [vh, setVh] = useState(Dimensions.get('window').height);
 
   const { postId, imageUri } = route.params;
 
@@ -33,8 +37,12 @@ export default function CommentsScreen({ navigation, route }) {
         comment: commentValue,
         date: Date.now(),
       });
-    } catch (error) {
-      console.log(error);
+
+      await updateDoc(docRef, {
+        commentsAmount: coments.length + 1,
+      });
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -45,8 +53,8 @@ export default function CommentsScreen({ navigation, route }) {
           snapshot.docs.map((doc) => ({ ...doc.data(), commentId: doc.id }))
         );
       });
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -64,14 +72,17 @@ export default function CommentsScreen({ navigation, route }) {
   };
 
   const handleSubmit = async () => {
-    if (commentValue) {
-      await createComment();
-      setCommentValue('');
-      onBackgroundPress();
+    try {
+      if (commentValue) {
+        await createComment();
+        setCommentValue('');
+        onBackgroundPress();
+      }
+    } catch (error) {
+      console.log(e);
     }
   };
 
-  console.log(vh);
   return (
     // <KeyboardAvoidingView
     //   behavior={Platform.OS === 'ios' ? 'position' : 'height'}

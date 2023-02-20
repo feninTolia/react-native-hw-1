@@ -8,12 +8,14 @@ import {
   FlatList,
   Pressable,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import { db } from '../../../firebase/config';
 
 import Post from '../../Components/Post';
 
 export default function DefaultPostsScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
+  const { nickname, email } = useSelector((state) => state.auth);
 
   const getAllPosts = async () => {
     try {
@@ -24,15 +26,15 @@ export default function DefaultPostsScreen({ route, navigation }) {
           snapshot.docs.map((doc) => ({ ...doc.data(), postId: doc.id }))
         );
       });
-    } catch (error) {
-      console.log(error);
+    } catch (e) {
+      console.log(e);
     }
   };
 
   useEffect(() => {
     getAllPosts();
     return () => {
-      unsub();
+      // unsub();
     };
   }, []);
 
@@ -49,8 +51,8 @@ export default function DefaultPostsScreen({ route, navigation }) {
           style={s.avatar}
         />
         <View style={s.creditsInnerTextWrapper}>
-          <Text style={s.name}>Anatolii Fenin</Text>
-          <Text style={s.email}>example@mail.com</Text>
+          <Text style={s.name}>{nickname}</Text>
+          <Text style={s.email}>{email}</Text>
         </View>
       </Pressable>
 
@@ -64,6 +66,7 @@ export default function DefaultPostsScreen({ route, navigation }) {
             location={item.location}
             mapNavigate={item.locationCoords}
             postId={item.postId}
+            commentsAmount={item.commentsAmount}
           />
         )}
       />

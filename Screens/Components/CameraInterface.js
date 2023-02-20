@@ -14,10 +14,14 @@ export default function CameraInterface({ navigation }) {
 
   useEffect(() => {
     (async () => {
-      const mediaLibraryStatus = await MediaLibrary.requestPermissionsAsync();
-      setHasMediaLibraryPermission(mediaLibraryStatus.status === 'granted');
-      const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(cameraStatus.status === 'granted');
+      try {
+        const mediaLibraryStatus = await MediaLibrary.requestPermissionsAsync();
+        setHasMediaLibraryPermission(mediaLibraryStatus.status === 'granted');
+        const cameraStatus = await Camera.requestCameraPermissionsAsync();
+        setHasCameraPermission(cameraStatus.status === 'granted');
+      } catch (e) {
+        console.log(e);
+      }
     })();
   }, []);
 
@@ -27,8 +31,8 @@ export default function CameraInterface({ navigation }) {
         const data = await cameraRef.current.takePictureAsync();
 
         setImage(data.uri);
-      } catch (error) {
-        console.warn(error);
+      } catch (e) {
+        console.log(e);
       }
     }
   };
@@ -39,8 +43,8 @@ export default function CameraInterface({ navigation }) {
         await MediaLibrary.createAssetAsync(image);
         setImage(null);
         navigation.navigate('DefaultCreatePostScreen', { image });
-      } catch (error) {
-        console.warn(error);
+      } catch (e) {
+        console.log(e);
       }
     }
   };

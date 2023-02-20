@@ -8,6 +8,7 @@ export default function Post({
   location = 'somewhere',
   mapNavigate,
   postId,
+  commentsAmount,
 }) {
   return (
     <View style={s.container}>
@@ -26,7 +27,7 @@ export default function Post({
               />
             </Link>
 
-            <Text style={s.iconsText}>8</Text>
+            <Text style={s.iconsText}>{commentsAmount}</Text>
           </View>
 
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>

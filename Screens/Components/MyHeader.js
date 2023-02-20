@@ -27,7 +27,6 @@ export default function MyHeader({ title, goBack, logout }) {
           // to={{ screen: 'LoginScreen', params: { id: 'jane' } }}
           style={styles.logOut}
           onPress={() => {
-            console.log('logout via redux');
             dispatch(authSignOutUser());
           }}
         >

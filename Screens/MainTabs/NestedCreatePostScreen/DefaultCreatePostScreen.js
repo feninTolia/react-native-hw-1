@@ -43,16 +43,20 @@ export default function CommentsScreen({ navigation, route }) {
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      setHasLocationPermission(status.toString());
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        setHasLocationPermission(status.toString());
 
-      if (hasLocationPermission === 'granted') {
-        let location = await Location.getCurrentPositionAsync({});
-        setLocation(location);
-      }
+        if (hasLocationPermission === 'granted') {
+          let location = await Location.getCurrentPositionAsync({});
+          setLocation(location);
+        }
 
-      if (hasLocationPermission === 'denied') {
-        alert('Location permission is denied, change that in settings');
+        if (hasLocationPermission === 'denied') {
+          alert('Location permission is denied, change that in settings');
+        }
+      } catch (e) {
+        console.log(e);
       }
     })();
   }, [hasLocationPermission]);
@@ -63,35 +67,41 @@ export default function CommentsScreen({ navigation, route }) {
   };
 
   const uploadImageToServer = async () => {
-    const response = await fetch(cameraImage);
-    const file = await response.blob();
+    try {
+      const response = await fetch(cameraImage);
+      const file = await response.blob();
 
-    const uniquePostID = Date.now().toString();
-    const pathReference = ref(storage, `postImage/${uniquePostID}`);
+      const uniquePostID = Date.now().toString();
+      const pathReference = ref(storage, `postImage/${uniquePostID}`);
 
-    await uploadBytes(pathReference, file).catch((e) => console.log(e.message));
-    const processedPhoto = await getDownloadURL(pathReference)
-      .then((url) => {
-        return url;
-      })
-      .catch((error) => {
-        switch (error.code) {
-          case 'storage/object-not-found':
-            console.log('File does not exist');
-            break;
-          case 'storage/unauthorized':
-            console.log(`User doesn't have permission to access the object`);
-            break;
-          case 'storage/canceled':
-            console.log(`User canceled the upload`);
-            break;
-          case 'storage/unknown':
-            console.log(`Unknown error occurred, inspect the server response`);
-            break;
-        }
-      });
+      await uploadBytes(pathReference, file).catch((e) => console.log(e));
+      const processedPhoto = await getDownloadURL(pathReference)
+        .then((url) => {
+          return url;
+        })
+        .catch((error) => {
+          switch (error.code) {
+            case 'storage/object-not-found':
+              console.log('File does not exist');
+              break;
+            case 'storage/unauthorized':
+              console.log(`User doesn't have permission to access the object`);
+              break;
+            case 'storage/canceled':
+              console.log(`User canceled the upload`);
+              break;
+            case 'storage/unknown':
+              console.log(
+                `Unknown error occurred, inspect the server response`
+              );
+              break;
+          }
+        });
 
-    return processedPhoto;
+      return processedPhoto;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const uploadPostToServer = async () => {
@@ -112,15 +122,19 @@ export default function CommentsScreen({ navigation, route }) {
   };
 
   const handleSubmit = async () => {
-    if (formValues.location && formValues.title && cameraImage) {
-      uploadPostToServer();
-      navigation.navigate('DefaultPostsScreen', {
-        cameraImage,
-        formValues,
-        location,
-      });
-      setFormValues(initialFormState);
-      setKeyboardIsOpen(false);
+    try {
+      if (formValues.location && formValues.title && cameraImage) {
+        uploadPostToServer();
+        navigation.navigate('DefaultPostsScreen', {
+          cameraImage,
+          formValues,
+          location,
+        });
+        setFormValues(initialFormState);
+        setKeyboardIsOpen(false);
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
 

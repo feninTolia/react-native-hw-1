@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,10 +7,47 @@ import {
   Image,
   ScrollView,
   Pressable,
+  FlatList,
 } from 'react-native';
+
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from 'firebase/firestore';
+import { db } from '../../firebase/config';
+
 import Post from '../Components/Post';
+import { useDispatch, useSelector } from 'react-redux';
+import { authSignOutUser } from '../redux/auth/authOperations';
+
+const postsRef = collection(db, 'posts');
+const userID = `zabQhUFmJAheFE5XvuBaseTbuDn1`;
 
 export default function ProfileScreen() {
+  const [posts, setPosts] = useState([]);
+  const { userID, nickname } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  const getUserPosts = async () => {
+    try {
+      const q = query(postsRef, where('userID', '==', userID));
+      const unsub = onSnapshot(q, (snapshot) => {
+        setPosts(
+          snapshot.docs.map((doc) => ({ ...doc.data(), postId: doc.id }))
+        );
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    getUserPosts();
+  }, []);
+
   return (
     <View style={s.container}>
       <ImageBackground
@@ -31,6 +68,7 @@ export default function ProfileScreen() {
               style={s.logOut}
               onPress={() => {
                 console.log('logout via redux');
+                dispatch(authSignOutUser());
               }}
             >
               <Image
@@ -38,11 +76,21 @@ export default function ProfileScreen() {
                 style={s.logOutIcon}
               />
             </Pressable>
-            <Text style={s.header}>Anatolii Fenin</Text>
+            <Text style={s.header}>{nickname}</Text>
 
-            <Post />
-            <Post />
-            <Post />
+            <FlatList
+              data={posts.sort((a, b) => new Date(b.date) - new Date(a.date))}
+              keyExtractor={(item) => item.date}
+              renderItem={({ item }) => (
+                <Post
+                  imageUri={item.photo}
+                  title={item.title}
+                  location={item.location}
+                  mapNavigate={item.locationCoords}
+                  postId={item.postId}
+                />
+              )}
+            />
           </View>
         </ScrollView>
       </ImageBackground>
