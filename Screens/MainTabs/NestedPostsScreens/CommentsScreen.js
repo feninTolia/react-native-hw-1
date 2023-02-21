@@ -52,10 +52,7 @@ export default function CommentsScreen({ route }) {
         snapshot.docs.map((doc) => ({ ...doc.data(), commentId: doc.id }))
       );
     });
-
-    return () => {
-      unsub();
-    };
+    return () => unsub();
   }, []);
 
   const onBackgroundPress = () => {
@@ -70,65 +67,68 @@ export default function CommentsScreen({ route }) {
         setCommentValue('');
         onBackgroundPress();
       }
-    } catch (error) {
+    } catch (e) {
       console.log(e);
     }
   };
 
   return (
-    // <KeyboardAvoidingView
-    //   behavior={Platform.OS === 'ios' ? 'position' : 'height'}
-    //   style={{ flex: 1, backgroundColor: 'green' }}
-    // >
-    <View
-      style={{
-        ...s.container,
-      }}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ backgroundColor: 'green', flex: 1 }}
     >
-      <Pressable onPress={onBackgroundPress}>
-        <Image source={{ uri: imageUri }} style={s.image} />
-      </Pressable>
-      <FlatList
-        // contentContainerStyle={{}}
-        style={{ flex: 'auto' }}
-        data={coments.sort((a, b) => new Date(b.date) - new Date(a.date))}
-        keyExtractor={(item) => item.commentId}
-        renderItem={({ item }) => (
-          <SingleComment
-            imageUri={item.photo}
-            title={item.comment}
-            date={item.date}
-          />
-        )}
-      />
-      <View style={s.inputGroupWrapper}>
-        <TextInput
-          style={{ ...s.input }}
-          placeholder="Comment..."
-          onFocus={() => {
-            setKeyboardIsOpen(true);
-          }}
-          value={commentValue}
-          onChangeText={(newValue) => setCommentValue(newValue)}
-        />
-        <Pressable
-          style={({ pressed }) => [
-            s.submitBtn,
-            {
-              backgroundColor:
-                pressed && commentValue ? 'rgb(210, 230, 255)' : '#FF6C00',
-            },
-          ]}
-          onPress={handleSubmit}
-        >
-          <Image
-            source={require('../../../assets/arrowUp.png')}
-            style={{ width: 10, height: 14 }}
-          />
+      <View
+        style={{
+          ...s.container,
+        }}
+      >
+        <Pressable onPress={onBackgroundPress}>
+          <Image source={{ uri: imageUri }} style={s.image} />
         </Pressable>
+
+        <FlatList
+          // contentContainerStyle={{}}
+          style={{ flex: 'auto' }}
+          data={coments.sort((a, b) => new Date(b.date) - new Date(a.date))}
+          keyExtractor={(item) => item.commentId}
+          renderItem={({ item }) => (
+            <SingleComment
+              imageUri={item.photo}
+              title={item.comment}
+              date={item.date}
+            />
+          )}
+        />
+
+        <View style={s.inputGroupWrapper}>
+          <TextInput
+            style={{ ...s.input, marginTop: keyboardIsOpen ? -100 : 0 }}
+            placeholder="Comment..."
+            onFocus={() => {
+              setKeyboardIsOpen(true);
+            }}
+            value={commentValue}
+            onChangeText={(newValue) => setCommentValue(newValue)}
+          />
+          <Pressable
+            style={({ pressed }) => [
+              s.submitBtn,
+              {
+                marginTop: keyboardIsOpen ? -100 : 0,
+                backgroundColor:
+                  pressed && commentValue ? 'rgb(210, 230, 255)' : '#FF6C00',
+              },
+            ]}
+            onPress={handleSubmit}
+          >
+            <Image
+              source={require('../../../assets/arrowUp.png')}
+              style={{ width: 10, height: 14 }}
+            />
+          </Pressable>
+        </View>
       </View>
-    </View>
-    // </KeyboardAvoidingView>
+    </KeyboardAvoidingView>
   );
 }
 
