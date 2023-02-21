@@ -5,6 +5,7 @@ const initialState = {
   nickname: null,
   email: null,
   commentsAmount: 0,
+  likesAmount: 0,
   photoURL: null,
   stateChange: false,
 };

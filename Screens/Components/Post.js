@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, Pressable } from 'react-native';
 import { NavigationContext } from '@react-navigation/native';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 
 export default function Post({
   imageUri,
@@ -8,9 +10,29 @@ export default function Post({
   location = 'somewhere',
   mapNavigate,
   postId,
-  commentsAmount,
+  commentsAmount = 0,
+  likesAmount = 0,
 }) {
+  const [liked, setLiked] = useState(false);
   const navigation = React.useContext(NavigationContext);
+
+  const postRef = doc(db, 'posts', postId);
+
+  const onPostLike = async () => {
+    setLiked(!liked);
+
+    if (!liked) {
+      await updateDoc(postRef, {
+        likesAmount: likesAmount + 1,
+      });
+
+      return;
+    }
+
+    await updateDoc(postRef, {
+      likesAmount: likesAmount - 1,
+    });
+  };
 
   return (
     <View style={s.container}>
@@ -35,13 +57,21 @@ export default function Post({
           <Text style={s.iconsText}>{commentsAmount}</Text>
         </Pressable>
 
-        <View style={s.iconsWrapper}>
+        <Pressable
+          style={{
+            ...s.likesWrapper,
+            padding: 8,
+            borderRadius: 10,
+            backgroundColor: liked ? 'rgb(210, 230, 255)' : 'transparent',
+          }}
+          onPress={onPostLike}
+        >
           <Image
             source={require('../../assets/like.png')}
             style={s.postIcons}
           />
-          <Text style={s.iconsText}> 153</Text>
-        </View>
+          <Text style={s.iconsText}>{likesAmount}</Text>
+        </Pressable>
 
         <Pressable
           hitSlop={8}
@@ -87,7 +117,11 @@ const s = StyleSheet.create({
     padding: 8,
     borderRadius: 10,
   },
-
+  likesWrapper: {
+    flexDirection: 'row',
+    borderRadius: 10,
+    padding: 8,
+  },
   locationWrapper: {
     flexDirection: 'row',
     alignItems: 'center',

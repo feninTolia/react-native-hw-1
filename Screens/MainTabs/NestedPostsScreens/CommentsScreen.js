@@ -21,7 +21,7 @@ import {
 import { db } from '../../../firebase/config';
 import SingleComment from '../../Components/SingleComment';
 
-export default function CommentsScreen({ navigation, route }) {
+export default function CommentsScreen({ route }) {
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(null);
   const [commentValue, setCommentValue] = useState('');
   const [coments, setComents] = useState([]);
@@ -46,23 +46,15 @@ export default function CommentsScreen({ navigation, route }) {
     }
   };
 
-  const getAllComments = async () => {
-    try {
-      const unsub = onSnapshot(colRef, (snapshot) => {
-        setComents(
-          snapshot.docs.map((doc) => ({ ...doc.data(), commentId: doc.id }))
-        );
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
-
   useEffect(() => {
-    getAllComments();
+    const unsub = onSnapshot(colRef, (snapshot) => {
+      setComents(
+        snapshot.docs.map((doc) => ({ ...doc.data(), commentId: doc.id }))
+      );
+    });
 
     return () => {
-      // unsub();
+      unsub();
     };
   }, []);
 

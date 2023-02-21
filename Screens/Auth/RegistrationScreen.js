@@ -17,10 +17,16 @@ import {
 import { useDispatch } from 'react-redux';
 import { authSignUpUser } from '../redux/auth/authOperations';
 
+import * as ImagePicker from 'expo-image-picker';
+
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { storage } from '../../firebase/config';
+
 const initialFormState = {
   nickname: '',
   email: '',
   password: '',
+  photoURL: '',
 };
 
 export default function RegistrationScreen({ navigation }) {
@@ -29,11 +35,51 @@ export default function RegistrationScreen({ navigation }) {
   const [keyboardIsOpen, setKeyboardIsOpen] = useState(false);
   const [isLastFieldFocused, setIsLastFieldFocused] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [avatarPhoto, setAvatarPhoto] = useState(null);
 
   const [dimensions, setDimensions] = useState(Dimensions.get('window').width);
   const { _, width } = useWindowDimensions();
 
   const dispatch = useDispatch();
+
+  const uploadImageToServer = async () => {
+    try {
+      const response = await fetch(avatarPhoto);
+      const file = await response.blob();
+
+      const uniquePostID = Date.now().toString();
+      const pathReference = ref(storage, `avatarImage/${uniquePostID}`);
+
+      await uploadBytes(pathReference, file).catch((e) => console.log(e));
+
+      const processedPhoto = await getDownloadURL(pathReference)
+        .then((url) => {
+          return url;
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+
+      return processedPhoto;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5,
+    });
+
+    if (!result.canceled) {
+      setAvatarPhoto(result.assets[0].uri);
+      const avatarPhotoURL = await uploadImageToServer();
+      setFormValues((prev) => ({ ...prev, photoURL: avatarPhotoURL }));
+    }
+  };
 
   useEffect(() => {
     setDimensions(width);
@@ -77,12 +123,22 @@ export default function RegistrationScreen({ navigation }) {
                 // paddingHorizontal: dimensions > 600 ? 96 : 16,
               }}
             >
-              <View style={styles.avatar}>
-                <Image />
-                <Image
-                  source={require('../../assets/add.png')}
-                  style={styles.addAvatarBtn}
-                />
+              <View style={styles.avatarWrapper}>
+                <Image source={{ uri: avatarPhoto }} style={styles.avatar} />
+                <Pressable
+                  style={({ pressed }) => [
+                    styles.addAvatarBtnWrapper,
+                    {
+                      transform: [{ scale: pressed ? 1.2 : 1 }],
+                    },
+                  ]}
+                  onPress={pickImage}
+                >
+                  <Image
+                    source={require('../../assets/add.png')}
+                    style={styles.addAvatarBtn}
+                  />
+                </Pressable>
               </View>
               <Text style={styles.header}>Registration</Text>
               <View style={styles.wrapper}>
@@ -178,7 +234,7 @@ const styles = StyleSheet.create({
     borderTopStartRadius: 25,
     paddingHorizontal: 16,
   },
-  avatar: {
+  avatarWrapper: {
     width: 120,
     height: 120,
     backgroundColor: 'pink',
@@ -188,12 +244,11 @@ const styles = StyleSheet.create({
     left: '50%',
     transform: [{ translateX: -60 }],
   },
+  avatar: { width: 120, height: 120, borderRadius: 16 },
+  addAvatarBtnWrapper: { position: 'absolute', right: -12.5, bottom: 14 },
   addAvatarBtn: {
-    position: 'absolute',
     width: 25,
     height: 25,
-    right: -12.5,
-    bottom: 14,
   },
   header: {
     color: '#212121',

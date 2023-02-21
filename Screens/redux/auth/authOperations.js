@@ -9,7 +9,7 @@ import {
 import { authSlice } from './authReducer';
 
 const authSignUpUser =
-  ({ nickname, email, password }) =>
+  ({ nickname, photoURL, email, password }) =>
   async (dispatch, getState) => {
     try {
       const { user } = await createUserWithEmailAndPassword(
@@ -17,12 +17,14 @@ const authSignUpUser =
         email,
         password
       );
-      await updateProfile(user, { displayName: nickname });
+      await updateProfile(user, { displayName: nickname, photoURL: photoURL });
 
       dispatch(
         authSlice.actions.updateUserProfile({
           userID: user.uid,
           nickname: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
         })
       );
     } catch (e) {
@@ -55,7 +57,6 @@ const authStateChangeUser = () => async (dispatch, getState) => {
   try {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // console.log(`user---------`, user);
         dispatch(
           authSlice.actions.updateUserProfile({
             userID: user.uid,
@@ -74,7 +75,6 @@ const authStateChangeUser = () => async (dispatch, getState) => {
 
 const updateUserAvatar = (photoURL) => async (dispatch, getState) => {
   await updateProfile(auth.currentUser, { photoURL });
-  console.log('auth.currentUser---------------', auth.currentUser);
   dispatch(
     authSlice.actions.updateUserAvatar({
       photoURL: auth.currentUser.photoURL,

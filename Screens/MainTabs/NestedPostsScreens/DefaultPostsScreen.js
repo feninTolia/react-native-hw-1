@@ -1,4 +1,10 @@
-import { collection, doc, getDocs, onSnapshot } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  updateDoc,
+} from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
@@ -13,28 +19,18 @@ import { db } from '../../../firebase/config';
 
 import Post from '../../Components/Post';
 
+const colRef = collection(db, 'posts');
+
 export default function DefaultPostsScreen({ route, navigation }) {
   const [posts, setPosts] = useState([]);
-  const { nickname, email } = useSelector((state) => state.auth);
-
-  const getAllPosts = async () => {
-    try {
-      const colRef = collection(db, 'posts');
-
-      const unsub = onSnapshot(colRef, (snapshot) => {
-        setPosts(
-          snapshot.docs.map((doc) => ({ ...doc.data(), postId: doc.id }))
-        );
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  const { nickname, email, photoURL } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    getAllPosts();
+    const unsub = onSnapshot(colRef, (snapshot) => {
+      setPosts(snapshot.docs.map((doc) => ({ ...doc.data(), postId: doc.id })));
+    });
     return () => {
-      // unsub();
+      unsub();
     };
   }, []);
 
@@ -46,10 +42,7 @@ export default function DefaultPostsScreen({ route, navigation }) {
           navigation.navigate('ProfileScreen');
         }}
       >
-        <Image
-          source={require('../../../assets/regBG.jpeg')}
-          style={s.avatar}
-        />
+        <Image source={{ uri: photoURL }} style={s.avatar} />
         <View style={s.creditsInnerTextWrapper}>
           <Text style={s.name}>{nickname}</Text>
           <Text style={s.email}>{email}</Text>
@@ -66,6 +59,7 @@ export default function DefaultPostsScreen({ route, navigation }) {
             location={item.location}
             mapNavigate={item.locationCoords}
             postId={item.postId}
+            likesAmount={item.likesAmount}
             commentsAmount={item.commentsAmount}
           />
         )}
@@ -84,7 +78,12 @@ const s = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 32,
   },
-  avatar: { width: 60, height: 60, borderRadius: 16 },
+  avatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 16,
+    backgroundColor: 'purple',
+  },
   creditsInnerTextWrapper: { justifyContent: 'center', marginLeft: 8 },
   name: { fontSize: 13, fontFamily: 'Roboto-Medium' },
   email: { fontSize: 11, fontFamily: 'Roboto-Regular' },

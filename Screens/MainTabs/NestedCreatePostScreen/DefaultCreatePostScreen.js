@@ -115,6 +115,7 @@ export default function CommentsScreen({ navigation, route }) {
         title: formValues.title,
         location: formValues.location,
         locationCoords: location.coords,
+        likesAmount: Math.floor(Math.random() * (341 - 21) + 21),
       });
     } catch (e) {
       console.log(e);
